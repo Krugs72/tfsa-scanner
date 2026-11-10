@@ -112,7 +112,8 @@ INFO_KEYS = ["shortName", "quoteType", "sector", "trailingPE", "forwardPE",
              "returnOnEquity", "returnOnAssets", "debtToEquity", "profitMargins",
              "freeCashflow", "marketCap", "earningsGrowth", "earningsQuarterlyGrowth",
              "revenueGrowth", "trailingPegRatio", "pegRatio", "enterpriseToEbitda",
-             "fiftyTwoWeekHigh", "dividendYield", "currency"]
+             "fiftyTwoWeekHigh", "dividendYield", "currency",
+             "targetMeanPrice", "numberOfAnalystOpinions"]
 
 
 def get_info(ticker, tries=3):
@@ -307,6 +308,15 @@ def macro_weather():
         notes.append(f"Bitcoin ${b['price']:,.0f} - {b['trend']} ({b['pct_vs_band']:+.1f}% vs 20-week)")
     except Exception as e:
         notes.append(f"Bitcoin data unavailable ({e})")
+    try:
+        # Crypto Fear & Greed index (0 = extreme fear, 100 = extreme greed); free, no key
+        j = requests.get("https://api.alternative.me/fng/?limit=8", headers=UA, timeout=20).json()["data"]
+        now, wk = int(j[0]["value"]), int(j[-1]["value"])
+        out["fng"] = now
+        notes.append(f"Crypto mood: Fear & Greed {now}/100 ({j[0]['value_classification']}), "
+                     f"{'up' if now > wk else 'down' if now < wk else 'flat'} from {wk} a week ago")
+    except Exception:
+        notes.append("Crypto mood unavailable this run")
     risk = 0
     risk -= 2 if out.get("sahm", 0) >= 0.5 else 1 if out.get("sahm", 0) >= 0.3 else 0
     risk -= 1 if out.get("yc", 1) < 0 else 0
@@ -351,13 +361,26 @@ def sentiment(ticker, name):
     try:
         base = ticker.split(".")[0]
         q = requests.utils.quote(f'"{base}" OR "{name}"')
-        r = requests.get(f"https://www.reddit.com/r/{'+'.join(config.SUBREDDITS)}/search.json"
+        subs = config.SUBREDDITS + (config.CRYPTO_SUBREDDITS if ticker in config.CRYPTO_LINKED else [])
+        r = requests.get(f"https://www.reddit.com/r/{'+'.join(dict.fromkeys(subs))}/search.json"
                          f"?q={q}&restrict_sr=1&sort=new&t=week&limit=50", headers=UA, timeout=20)
         posts = [p["data"]["title"] for p in r.json()["data"]["children"]]
     except Exception:
         pass
     time.sleep(2)
-    return {"news_tone": tone(heads), "reddit_tone": tone(posts),
+    bull = ""
+    try:
+        # StockTwits: traders tag posts Bullish/Bearish (closest free thing to X chatter)
+        sym = ticker.replace(".TO", ".CA")
+        r = requests.get(f"https://api.stocktwits.com/api/2/streams/symbol/{sym}.json",
+                         headers=UA, timeout=20)
+        tags = [(m.get("entities") or {}).get("sentiment") or {} for m in r.json().get("messages", [])]
+        tags = [t.get("basic") for t in tags if t.get("basic")]
+        if len(tags) >= 5:
+            bull = round(sum(t == "Bullish" for t in tags) / len(tags), 2)
+    except Exception:
+        pass
+    return {"news_tone": tone(heads), "reddit_tone": tone(posts), "st_bull": bull,
             "reddit_posts": len(posts),
             "buzz": "HIGH" if len(posts) >= 25 else "medium" if len(posts) >= 8 else "low",
             "headline": heads[0] if heads else ""}
@@ -509,7 +532,8 @@ def write_reports(df, macro):
             "currency", "cad_note", "verdict", "trend",
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
             "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock",
-            "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score"]
+            "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score",
+            "target", "n_analysts", "upside", "st_bull"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
     df.to_csv(os.path.join(config.REPORT_DIR, f"scan-{TODAY}.csv"), index=False)
@@ -624,6 +648,10 @@ def main(quick=False):
                      "rev_growth": f.get("revenueGrowth"),
                      "eps_growth": f.get("earningsQuarterlyGrowth"),
                      "pe": f.get("trailingPE") or f.get("forwardPE"),
+                     "target": f.get("targetMeanPrice"),
+                     "n_analysts": f.get("numberOfAnalystOpinions"),
+                     "upside": (f["targetMeanPrice"] / tr["price"] - 1)
+                     if f.get("targetMeanPrice") and tr.get("price") else None,
                      "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None})
     df = pd.DataFrame(rows)
     df["greenblatt"] = greenblatt_ranks(df)
@@ -636,7 +664,7 @@ def main(quick=False):
     df = df.sort_values(["passes", "total"], ascending=False).reset_index(drop=True)
 
     print("5/5 News + Reddit on holdings and top picks...")
-    for c in ("buzz", "news_tone", "reddit_tone", "headline"):
+    for c in ("buzz", "news_tone", "reddit_tone", "st_bull", "headline"):
         df[c] = pd.Series([""] * len(df), dtype=object)
     check = list(dict.fromkeys(
         [t for t in config.HOLDINGS if t in set(df.ticker)] +
@@ -644,7 +672,7 @@ def main(quick=False):
     for t in check:
         idx = df.index[df.ticker == t][0]
         s = sentiment(t, df.at[idx, "name"])
-        for k in ("buzz", "news_tone", "reddit_tone", "headline"):
+        for k in ("buzz", "news_tone", "reddit_tone", "st_bull", "headline"):
             df.at[idx, k] = s[k]
     df["verdict"] = df.apply(lambda r: verdict(r, macro["regime"]), axis=1)
     df["currency"] = df.ticker.map(lambda t: cad_info(t)[0])

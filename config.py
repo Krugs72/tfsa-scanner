@@ -24,6 +24,10 @@ BENCHMARK = "SPY"
 SUBREDDITS = ["stocks", "investing", "CanadianInvestor", "wallstreetbets",
               "Silverbugs", "UraniumSqueeze", "Bitcoin"]
 
+# Bitcoin-linked names also get crypto Reddit + crypto mood
+CRYPTO_LINKED = ["MSTR", "COIN", "MARA", "RIOT", "HUT.TO", "BITF.TO"]
+CRYPTO_SUBREDDITS = ["Bitcoin", "CryptoCurrency", "MSTR", "BitcoinMarkets"]
+
 # How many top-scoring new ideas get the slower news + Reddit check
 SENTIMENT_TOP_N = 25
 # How many top picks to list in the report
