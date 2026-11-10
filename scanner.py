@@ -1,5 +1,5 @@
 """
-TFSA Scanner v2 - scores the S&P 500 + TSX Composite (plus your holdings and
+TFSA Scanner v2 - scores the S&P 500 + TSX Composite + S&P 400 mid caps + S&P 600 small caps (plus your holdings and
 watchlist) with five great investors' rules, each worth 0-20 points:
 
   Cowan      - trend: 20-week SMA / 21-week EMA "bull market support band"
@@ -44,6 +44,23 @@ def sp500_tickers():
     return [s.replace(".", "-") for s in syms]
 
 
+def _wiki_symbols(url):
+    tables = pd.read_html(io.StringIO(requests.get(url, headers=UA, timeout=30).text))
+    for t in tables:
+        col = next((c for c in t.columns if str(c).lower() in ("symbol", "ticker", "ticker symbol")), None)
+        if col is not None and len(t) > 300:
+            return [str(x).replace(".", "-") for x in t[col]]
+    return []
+
+
+def sp400_tickers():   # US mid caps
+    return _wiki_symbols("https://en.wikipedia.org/wiki/List_of_S%26P_400_companies")
+
+
+def sp600_tickers():   # US small caps: where a lot of future growth stocks live
+    return _wiki_symbols("https://en.wikipedia.org/wiki/List_of_S%26P_600_companies")
+
+
 def tsx_tickers():
     url = "https://en.wikipedia.org/wiki/S%26P/TSX_Composite_Index"
     tables = pd.read_html(io.StringIO(requests.get(url, headers=UA, timeout=30).text))
@@ -58,7 +75,7 @@ def build_universe(quick=False):
     names = list(dict.fromkeys(config.HOLDINGS + config.WATCHLIST))
     if quick or not config.SCAN_UNIVERSE:
         return names
-    for fn in (sp500_tickers, tsx_tickers):
+    for fn in (sp500_tickers, tsx_tickers, sp400_tickers, sp600_tickers):
         try:
             got = fn()
             print(f"  {fn.__name__}: {len(got)} tickers")

@@ -14,7 +14,7 @@ WATCHLIST = [
     "IBIT", "COIN",                                    # bitcoin-related
 ]
 
-# Scan the whole S&P 500 + TSX Composite? (~750 stocks, takes 30-60 min on GitHub)
+# Scan S&P 500 + TSX Composite + S&P 400 + S&P 600 (~1,700 stocks, ~30-40 min on GitHub)
 SCAN_UNIVERSE = True
 
 # Benchmark for "is this stock beating the market" (O'Neil relative strength)
