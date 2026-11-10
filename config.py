@@ -54,3 +54,22 @@ NEAR_HIGH = 0.15        # within 15% of 52-week high
 PASS_MARK = 14
 
 REPORT_DIR = "reports"
+
+# --- Canadian / no-FX-fee options ---
+# Wealthsimple charges 1.5% to convert CAD<->USD on every US trade (CAD account).
+# Canadian-listed stocks (.TO/.V) and CDRs (CAD-hedged US stocks on Cboe Canada) avoid it.
+# US ticker -> Cboe Canada CDR ticker (from CIBC/BMO CDR announcements; check
+# cboe.com/listings/ca/cdr for the full, current list and add more here).
+CDR_MAP = {
+    "ABT": "ABT", "AMGN": "AMGN", "AZO": "AZO", "SCHW": "SCHW", "FI": "FI",
+    "GEV": "GEV", "GILD": "GILD", "KKR": "KKR", "MS": "MS", "NEE": "NEE",
+    "PEP": "PEP", "SPGI": "SPGI", "TJX": "TJX", "UNP": "UNP", "WM": "WAST",
+    "ABNB": "ABNB", "AMAT": "AMAT", "ANET": "ANET", "BX": "BX", "CMG": "CMGS",
+    "MRK": "MRK", "OXY": "OXY", "ORCL": "ORAC", "PLTR": "PLTR", "WFC": "WFCS",
+}
+
+# --- Signals ---
+# ENTRY SIGNAL: passes this many investors' rules, trend is up (not overheated),
+# business isn't junk, and the market isn't risk-off.
+ENTRY_MIN_PASSES = 4
+ENTRY_MIN_BUFFETT = 10

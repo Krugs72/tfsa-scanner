@@ -370,17 +370,52 @@ def verdict(r, regime):
     return v
 
 
+# =============================================================== signals ===
+def cad_info(t):
+    if t.endswith((".TO", ".V", ".NE", ".CN")):
+        return "CAD", ""
+    cdr = config.CDR_MAP.get(t)
+    if cdr:
+        return "CDR", f"CAD version: {cdr} (Cboe Canada CDR)"
+    return "USD", "US-only: 1.5% FX fee each way"
+
+
+def signal(r, regime, held):
+    """Rule-based alerts. Research leads, not orders."""
+    trend = r["trend"]
+    up = ("RECLAIMED" in trend) or (trend == "Uptrend")
+    if held:
+        if "JUST LOST" in trend:
+            return "EXIT WATCH - just fell below trend band"
+        if "Overheated" in trend:
+            return "TRIM WATCH - overheated, consider taking some profit"
+        if trend == "Downtrend" and r["buffett"] < 6 and r["is_stock"]:
+            return "EXIT WATCH - weak business in a downtrend"
+        if "RECLAIMED" in trend:
+            return "ADD WATCH - trend just turned back up"
+        return ""
+    if (up and r["passes"] >= config.ENTRY_MIN_PASSES
+            and r["buffett"] >= config.ENTRY_MIN_BUFFETT and regime != "RISK-OFF"):
+        strong = "RECLAIMED" in trend and r["passes"] >= 4
+        return "STRONG ENTRY SIGNAL" if strong else "ENTRY SIGNAL"
+    return ""
+
+
 # ================================================================ report ===
 def write_reports(df, macro):
     os.makedirs(config.REPORT_DIR, exist_ok=True)
-    cols = ["ticker", "name", "price", "total", "passes", "passed", "verdict", "trend",
+    cols = ["ticker", "name", "price", "total", "passes", "passed", "signal", "new_signal",
+            "currency", "cad_note", "verdict", "trend",
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
-            "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline"]
+            "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
     df.to_csv(os.path.join(config.REPORT_DIR, f"scan-{TODAY}.csv"), index=False)
 
     held = df[df.ticker.isin(config.HOLDINGS)]
+    signals = df[df.signal.astype(str).str.contains("ENTRY") & ~df.ticker.isin(config.HOLDINGS)]
+    canada = df[df.currency.isin(["CAD", "CDR"]) & ~df.ticker.isin(config.HOLDINGS)
+                & df.is_stock.astype(bool)].head(15)
     new = df[~df.ticker.isin(config.HOLDINGS)].head(config.REPORT_TOP_N)
     emerging = df[df.verdict.astype(str).str.startswith("EMERGING")
                   & ~df.ticker.isin(config.HOLDINGS)].head(10)
@@ -390,6 +425,10 @@ def write_reports(df, macro):
                  "|---|---|---|---|---|---|"]
         for _, r in d.iterrows():
             why = r["passed"] or "-"
+            if isinstance(r.get("signal"), str) and r["signal"]:
+                why = f"**{r['signal']}**" + (" 🆕" if r.get("new_signal") else "") + " · " + why
+            if r.get("currency") in ("USD", "CDR"):
+                why += f" · {r['cad_note']}"
             if isinstance(r["headline"], str) and r["headline"]:
                 why += " · News: " + r["headline"][:80].replace("|", "/")
             lines.append(f"| **{r['ticker']}** {str(r['name'])[:22]} | {r['total']} | "
@@ -403,7 +442,13 @@ def write_reports(df, macro):
     md += ["", f"Scanned {len(df)} stocks/ETFs. Each investor's rules are worth 20 points "
            f"(total out of 100). 'Passes' = how many investors' rules it meets "
            f"({config.PASS_MARK}+/20).", "",
+           "## 🔔 Entry signals (passes 4+ investors, uptrend, decent business)",
+           ("🆕 = new this week. Signals are research leads, not orders: check the news "
+            "and size it small first."), "",
+           md_table(signals.head(20)) if len(signals) else "_No entry signals this week._", "",
            "## Your holdings", md_table(held), "",
+           "## 🇨🇦 Top Canadian picks (no FX fee: TSX-listed or CDR available)",
+           md_table(canada) if len(canada) else "_None this week._", "",
            "## Emerging setups (trend just turned or fast growth + uptrend)",
            md_table(emerging) if len(emerging) else "_Nothing new this week._", "",
            f"## Top {config.REPORT_TOP_N} new ideas", md_table(new), "",
@@ -490,6 +535,18 @@ def main(quick=False):
         for k in ("buzz", "news_tone", "reddit_tone", "headline"):
             df.at[idx, k] = s[k]
     df["verdict"] = df.apply(lambda r: verdict(r, macro["regime"]), axis=1)
+    df["currency"] = df.ticker.map(lambda t: cad_info(t)[0])
+    df["cad_note"] = df.ticker.map(lambda t: cad_info(t)[1])
+    df["signal"] = df.apply(lambda r: signal(r, macro["regime"],
+                                             r["ticker"] in config.HOLDINGS), axis=1)
+    prev = set()
+    try:
+        old = pd.read_csv(os.path.join(config.REPORT_DIR, "latest.csv"))
+        prev = set(old.loc[old["signal"].astype(str).str.len() > 0, "ticker"]) \
+            if "signal" in old else set()
+    except Exception:
+        pass
+    df["new_signal"] = df.apply(lambda r: bool(r["signal"]) and r["ticker"] not in prev, axis=1)
     path = write_reports(df, macro)
     print(f"\nDone. Report: {path}")
     return path
