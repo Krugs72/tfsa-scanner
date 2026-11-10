@@ -5,9 +5,9 @@
 - Short-term rates 4.03% - Fed has been hiking
 - Jobs data unavailable this run (FRED blocked) - see the Sunday report
 - Yield curve (10y-3m) +0.83 - recently un-inverted (has come before past recessions)
-- Bitcoin $74,113 - Testing band (-0.2% vs 20-week)
+- Bitcoin $73,657 - Testing band (-0.8% vs 20-week)
 
-Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of 100). 'Passes' = how many investors' rules it meets (14+/20).
+Scanned 731 stocks/ETFs. Each investor's rules are worth 20 points (total out of 100). 'Passes' = how many investors' rules it meets (14+/20).
 
 ## 🔔 Entry signals (passes 4+ investors, uptrend, decent business)
 🆕 = new this week. Signals are research leads, not orders: check the news and size it small first.
@@ -26,7 +26,7 @@ Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 | **DSV.TO** DISCOVERY MINING LTD | 82 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Discovery Mining Ltd. (DSV): Understanding Its High-Beta Profile and Exposure to |
 | **PSX** Phillips 66 | 81 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Is Phillips 66 Stock Worth Buying Despite Its Premium Valuation? - Yahoo Finance |
 | **COP** ConocoPhillips | 80 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Is ConocoPhillips a Buy After Its Latest Earnings Report? - The Globe and Mail |
-| **EOG** EOG Resources, Inc. | 80 | 4/5 | CORE | Uptrend (+2%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Looking for a Growth Stock? 3 Reasons Why EOG Resources (EOG) is a Solid Choice  |
+| **EOG** EOG Resources, Inc. | 80 | 4/5 | CORE | Uptrend (+2%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Why is EOG Resources stock rallying today? - Investing.com |
 | **MPWR** Monolithic Power Syste | 78 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · US-only: 1.5% FX fee each way · News: Monolithic Power Systems Inc Stock (MPWR) Moved Up by 7.16% on Nov 3: Drivers Be |
 | **NWC.TO** THE NORTH WEST COMPANY | 78 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt · News: How The North West Company Inc. (TSX:NWC), an S&P/TSX Composite Index Member, Is |
 | **GEN** Gen Digital Inc. | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Gen Digital Stock: Is Wall Street Bullish or Bearish? - Yahoo Finance |
@@ -40,6 +40,7 @@ Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 |---|---|---|---|---|---|
 | **VEQT.TO** VANGUARD ALL EQUITY ET | 24 | 1/5 | CORE | Testing band (-0%) | Buffett |
 | **XDIV.TO** ISHARES CORE MSCI CAD  | 24 | 1/5 | CORE | Testing band (+1%) | Buffett |
+| **CGL-C.TO** ISHARES GOLD BULLION E | 24 | 1/5 | CORE | Testing band (-1%) | Buffett |
 | **MSTR** Strategy Inc | 20 | 0/5 | WATCH | Testing band (+1%) | - · US-only: 1.5% FX fee each way · News: Digital Credit Market Hits $16 Billion: Can Strategy Scale Up? - TradingView |
 | **CCO.TO** CAMECO CORP | 17 | 0/5 | WATCH | Downtrend (-15%) | - · News: Cameco Corp. stock rises Monday, outperforms market - MarketWatch |
 | **INFQ** Infleqtion, Inc. | 7 | 0/5 | AVOID FOR NOW | Downtrend (-14%) | **EXIT WATCH - weak business in a downtrend** · - · US-only: 1.5% FX fee each way · News: Form 4 Infleqtion Inc: Ilan Hart (CFO) For: 3 November By Investing.com - Invest |
@@ -53,10 +54,10 @@ Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 | **KNT.TO** K92 MINING INC | 84 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Why K92 Mining Inc. (TSX:KNT) Is on Investors’ Radar as the S&P/TSX Market Watch |
 | **ATZ.TO** ARITZIA INC | 82 | 4/5 | CORE | Uptrend (+15%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · News: TSX:ATZ in Focus: Aritzia, Inc. Faces a Fresh Investor Test as Markets Track the |
 | **DSV.TO** DISCOVERY MINING LTD | 82 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Discovery Mining Ltd. (DSV): Understanding Its High-Beta Profile and Exposure to |
-| **RUS.TO** RUSSEL METALS | 79 | 4/5 | CORE | Testing band (-2%) | Buffett, Lynch, O'Neil, Greenblatt · News: What Russel Metals (RUS) Said on Its Q3 Earnings Call - Yahoo Finance |
+| **RUS.TO** RUSSEL METALS | 79 | 4/5 | CORE | Testing band (-2%) | Buffett, Lynch, O'Neil, Greenblatt · News: What Russel Metals (RUS) Said on Its Q3 Earnings Call - TradingView |
 | **NWC.TO** THE NORTH WEST COMPANY | 78 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt · News: How The North West Company Inc. (TSX:NWC), an S&P/TSX Composite Index Member, Is |
 | **BAM.TO** BROOKFIELD ASSET MANAG | 76 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · News: Brookfield Asset Management Reports Strong Third-Quarter Earnings and Fundraisin |
-| **IMG.TO** IAMGOLD CORP | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Why Is Everyone Ignoring Iamgold Stock's High Cash Yield? - Yahoo Finance |
+| **IMG.TO** IAMGOLD CORP | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Iamgold Corp (IAG) Q3 2026 Earnings Call Highlights: Record Cash Generation, Net |
 | **BHC.TO** BAUSCH HEALTH COMPANIE | 73 | 4/5 | EMERGING | Uptrend (+36%) | Cowan, Lynch, O'Neil, Greenblatt |
 | **QBR-B.TO** QUEBECOR INC CLASS B S | 65 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt |
 | **OGC.TO** OCEANAGOLD CORPORATION | 81 | 3/5 | CORE | JUST RECLAIMED band (+8%) | Cowan, Buffett, Greenblatt |
@@ -94,8 +95,8 @@ Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 | **DSV.TO** DISCOVERY MINING LTD | 82 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Discovery Mining Ltd. (DSV): Understanding Its High-Beta Profile and Exposure to |
 | **PSX** Phillips 66 | 81 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Is Phillips 66 Stock Worth Buying Despite Its Premium Valuation? - Yahoo Finance |
 | **COP** ConocoPhillips | 80 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Is ConocoPhillips a Buy After Its Latest Earnings Report? - The Globe and Mail |
-| **EOG** EOG Resources, Inc. | 80 | 4/5 | CORE | Uptrend (+2%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Looking for a Growth Stock? 3 Reasons Why EOG Resources (EOG) is a Solid Choice  |
-| **RUS.TO** RUSSEL METALS | 79 | 4/5 | CORE | Testing band (-2%) | Buffett, Lynch, O'Neil, Greenblatt · News: What Russel Metals (RUS) Said on Its Q3 Earnings Call - Yahoo Finance |
+| **EOG** EOG Resources, Inc. | 80 | 4/5 | CORE | Uptrend (+2%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Why is EOG Resources stock rallying today? - Investing.com |
+| **RUS.TO** RUSSEL METALS | 79 | 4/5 | CORE | Testing band (-2%) | Buffett, Lynch, O'Neil, Greenblatt · News: What Russel Metals (RUS) Said on Its Q3 Earnings Call - TradingView |
 | **MPWR** Monolithic Power Syste | 78 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · US-only: 1.5% FX fee each way · News: Monolithic Power Systems Inc Stock (MPWR) Moved Up by 7.16% on Nov 3: Drivers Be |
 | **NWC.TO** THE NORTH WEST COMPANY | 78 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt · News: How The North West Company Inc. (TSX:NWC), an S&P/TSX Composite Index Member, Is |
 | **GEN** Gen Digital Inc. | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Gen Digital Stock: Is Wall Street Bullish or Bearish? - Yahoo Finance |
@@ -103,7 +104,7 @@ Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 | **NEM** Newmont Corporation | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Can Newmont's Strong Free Cash Flow Momentum Carry Into Q4? - TradingView |
 | **TXN** Texas Instruments Inco | 76 | 4/5 | CORE | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · US-only: 1.5% FX fee each way · News: Bull of the Day: Texas Instrument (TXN) - TradingView |
 | **BAM.TO** BROOKFIELD ASSET MANAG | 76 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil · News: Brookfield Asset Management Reports Strong Third-Quarter Earnings and Fundraisin |
-| **IMG.TO** IAMGOLD CORP | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Why Is Everyone Ignoring Iamgold Stock's High Cash Yield? - Yahoo Finance |
+| **IMG.TO** IAMGOLD CORP | 76 | 4/5 | CORE | JUST RECLAIMED band (+10%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · News: Iamgold Corp (IAG) Q3 2026 Earnings Call Highlights: Record Cash Generation, Net |
 | **PNR** Pentair plc. | 74 | 4/5 | CORE | JUST RECLAIMED band (+13%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt · US-only: 1.5% FX fee each way · News: Pentair PLC stock underperforms Monday when compared to competitors despite dail |
 | **HAS** Hasbro, Inc. | 73 | 4/5 | CORE | Uptrend (+26%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt · US-only: 1.5% FX fee each way · News: Hasbro stock hits 52-week high at 121.08 USD By Investing.com - Investing.com Ca |
 | **BHC.TO** BAUSCH HEALTH COMPANIE | 73 | 4/5 | EMERGING | Uptrend (+36%) | Cowan, Lynch, O'Neil, Greenblatt |

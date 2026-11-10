@@ -1,6 +1,6 @@
 # ☀️ Morning brief · Nov 10
 
-**Market:** NEUTRAL / CAUTIOUS · BTC $74,113 (Testing band)
+**Market:** NEUTRAL / CAUTIOUS · BTC $73,657 (Testing band)
 
 ## 🇨🇦 Canada growth (no FX fee)
 **1. BAM.TO** BROOKFIELD ASSET MANAGEMENT  · $76.48 · Growth 95/100 · 🔔 ENTRY SIGNAL
@@ -37,6 +37,7 @@
 ## 📌 Your holdings
 - **VEQT.TO** $61.73 · Testing band (-0%)
 - **XDIV.TO** $46.23 · Testing band (+1%)
+- **CGL-C.TO** $48.71 · Testing band (-1%)
 - **MSTR** $125.59 · Testing band (+1%)
 - **CCO.TO** $106.33 · Downtrend (-15%)
 - **INFQ** $9.66 · Downtrend (-14%) · ⚠️ EXIT WATCH
