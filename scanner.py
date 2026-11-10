@@ -564,6 +564,11 @@ def write_reports(df, macro):
     with open(os.path.join(config.REPORT_DIR, "latest.html"), "w", encoding="utf-8") as fh:
         fh.write(page)
     write_brief(df, macro)
+    try:
+        from dashboard import write_dashboard
+        write_dashboard(df, macro, os.path.join(config.REPORT_DIR, "dashboard.html"))
+    except Exception as e:
+        print("dashboard failed:", e)
     return os.path.join(config.REPORT_DIR, "latest.md")
 
 
