@@ -37,11 +37,12 @@ def write_dashboard(df, macro, path):
     ok = (~df.ticker.isin(held)) & df.is_stock.astype(bool) & \
          (~df.trend.astype(str).str.contains("Overheated")) & (df.buffett >= 6)
     consensus = df[ok & (df.passes >= 4) & (df.cowan >= 10)] \
-        .sort_values(["passes", "total"], ascending=False).head(12)
+        .sort_values(["passes", "total"], ascending=False) \
+        .drop_duplicates("name").head(12)   # e.g. FOX and FOXA are the same company
     growth = df[ok & (df.cowan >= 10)].copy()
     growth = growth[growth.rev_growth.astype(float).fillna(0) >= 0.10]
     growth = growth[~growth.ticker.isin(consensus.ticker.head(6))] \
-        .sort_values("growth_score", ascending=False).head(8)
+        .sort_values("growth_score", ascending=False).drop_duplicates("name").head(8)
     other = df[df.ticker.isin(config.WATCHLIST) & ~df.ticker.isin(held)] \
         .sort_values("cowan", ascending=False).head(6)
     hold = df[df.ticker.isin(held)]
