@@ -402,12 +402,95 @@ def signal(r, regime, held):
 
 
 # ================================================================ report ===
+def _pct(x):
+    try:
+        return f"{float(x) * 100:+.0f}%" if x == x and x is not None else "n/a"
+    except Exception:
+        return "n/a"
+
+
+def add_growth_score(df):
+    """For a 24-year-old's long runway: reward fast-growing sales/earnings in an
+    uptrend that's still a real business. 0-100."""
+    rg = pd.to_numeric(df["rev_growth"], errors="coerce").fillna(0).clip(-0.5, 1.0)
+    eg = pd.to_numeric(df["eps_growth"], errors="coerce").fillna(0).clip(-1, 2.0)
+    score = (rg.rank(pct=True) * 30 + eg.rank(pct=True) * 20 +
+             df["oneil"] * 1.0 + df["lynch"] * 0.5 + df["cowan"] * 0.75 + df["buffett"] * 0.25)
+    df["growth_score"] = score.round().astype(int)
+    return df
+
+
+def growth_bullets(r):
+    b, stats = [], []
+    rg, eg, pe = r.get("rev_growth"), r.get("eps_growth"), r.get("pe")
+    if rg == rg and rg is not None:
+        stats.append(f"Sales {_pct(rg)}")
+    if eg == eg and eg is not None:
+        stats.append(f"Earnings {_pct(eg)}")
+    if pe == pe and pe:
+        stats.append(f"P/E {pe:.0f}")
+    if stats:
+        b.append(" · ".join(stats))
+    if "RECLAIMED" in str(r["trend"]):
+        b.append("Just broke back above its trend line")
+    elif r["trend"] == "Uptrend":
+        b.append(f"Uptrend, {r['ret_26w']:+.0f}% in 6 months")
+    if r["passed"]:
+        b.append(f"Passes {r['passed']}")
+    if r.get("sector") in ("Basic Materials", "Energy"):
+        b.append("⚠️ Commodity-driven: rides metal/oil prices")
+    return b
+
+
+def write_brief(df, macro):
+    """Short phone-friendly dashboard: top growth picks by Canada / US / Other."""
+    held = set(config.HOLDINGS)
+    ok = (~df.ticker.isin(held)) & df.is_stock.astype(bool) & \
+         (df.cowan >= 10) & (~df.trend.astype(str).str.contains("Overheated")) & \
+         (pd.to_numeric(df.rev_growth, errors="coerce").fillna(0) >= 0.10) & (df.buffett >= 6)
+    g = df[ok].sort_values("growth_score", ascending=False)
+    ca = g[g.currency.isin(["CAD"])].head(3)
+    us = g[g.currency.isin(["USD", "CDR"])].head(3)
+    other_t = [t for t in config.WATCHLIST if t in set(df.ticker)]
+    other = df[df.ticker.isin(other_t) & (df.cowan >= 10)].sort_values("cowan", ascending=False).head(3)
+
+    def block(d):
+        out = []
+        for i, (_, r) in enumerate(d.iterrows(), 1):
+            sig = f" · 🔔 {r['signal']}" if isinstance(r["signal"], str) and "ENTRY" in r["signal"] else ""
+            cad = f" · 🇨🇦 buy as {config.CDR_MAP[r['ticker']]}" if r["currency"] == "CDR" else \
+                  (" · 💱 1.5% FX fee" if r["currency"] == "USD" else "")
+            out.append(f"**{i}. {r['ticker']}** {str(r['name'])[:28]} · ${r['price']:,.2f} · "
+                       f"Growth {r['growth_score']}/100{sig}{cad}")
+            out += [f"   - {x}" for x in growth_bullets(r)[:4]]
+        return out or ["_Nothing qualifies today._"]
+
+    btc = macro.get("btc", {})
+    lines = [f"# ☀️ Morning brief · {TODAY:%b %d}", "",
+             f"**Market:** {macro['regime']}" + (f" · BTC ${btc['price']:,.0f} ({btc['trend']})" if btc else ""),
+             "", "## 🇨🇦 Canada growth (no FX fee)"] + block(ca) + \
+            ["", "## 🇺🇸 US growth"] + block(us) + \
+            ["", "## 🌐 Other (metals, crypto, themes)"]
+    for _, r in other.iterrows():
+        lines.append(f"- **{r['ticker']}** ${r['price']:,.2f} · {r['trend']} ({r['pct_vs_band']:+.0f}% vs line)")
+    if not len(other):
+        lines.append("_Nothing in an uptrend._")
+    lines += ["", "## 📌 Your holdings"]
+    for _, r in df[df.ticker.isin(held)].iterrows():
+        flag = f" · ⚠️ {r['signal'].split(' - ')[0]}" if isinstance(r["signal"], str) and r["signal"] else ""
+        lines.append(f"- **{r['ticker']}** ${r['price']:,.2f} · {r['trend']} ({r['pct_vs_band']:+.0f}%){flag}")
+    lines += ["", "_Research only, not financial advice._"]
+    with open(os.path.join(config.REPORT_DIR, "brief.md"), "w", encoding="utf-8") as fh:
+        fh.write("\n".join(lines))
+
+
 def write_reports(df, macro):
     os.makedirs(config.REPORT_DIR, exist_ok=True)
     cols = ["ticker", "name", "price", "total", "passes", "passed", "signal", "new_signal",
             "currency", "cad_note", "verdict", "trend",
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
-            "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock"]
+            "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock",
+            "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
     df.to_csv(os.path.join(config.REPORT_DIR, f"scan-{TODAY}.csv"), index=False)
@@ -478,6 +561,7 @@ def write_reports(df, macro):
             "<p><small>Research only, not financial advice.</small></p>")
     with open(os.path.join(config.REPORT_DIR, "latest.html"), "w", encoding="utf-8") as fh:
         fh.write(page)
+    write_brief(df, macro)
     return os.path.join(config.REPORT_DIR, "latest.md")
 
 
@@ -512,7 +596,11 @@ def main(quick=False):
                      "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
                      "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
                      "sector": f.get("sector"), "returnOnAssets": f.get("returnOnAssets"),
-                     "enterpriseToEbitda": f.get("enterpriseToEbitda")})
+                     "enterpriseToEbitda": f.get("enterpriseToEbitda"),
+                     "rev_growth": f.get("revenueGrowth"),
+                     "eps_growth": f.get("earningsQuarterlyGrowth"),
+                     "pe": f.get("trailingPE") or f.get("forwardPE"),
+                     "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None})
     df = pd.DataFrame(rows)
     df["greenblatt"] = greenblatt_ranks(df)
     inv = ["cowan", "buffett", "lynch", "oneil", "greenblatt"]
@@ -546,6 +634,7 @@ def main(quick=False):
             if "signal" in old else set()
     except Exception:
         pass
+    df = add_growth_score(df)
     df["new_signal"] = df.apply(lambda r: bool(r["signal"]) and r["ticker"] not in prev, axis=1)
     path = write_reports(df, macro)
     print(f"\nDone. Report: {path}")

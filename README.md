@@ -1,8 +1,8 @@
 # TFSA Scanner
 
-Every Saturday morning, GitHub runs this automatically. It scores about 750 stocks: the whole S&P 500, the TSX Composite, your holdings and your watchlist.
+Every weekday morning (~5:47am Edmonton), GitHub runs this automatically. It scores about 750 stocks: the whole S&P 500, the TSX Composite, your holdings and your watchlist.
 
-**Where to read it:** open `reports/latest.md` in the GitHub phone app or on github.com. It shows as a clean table. Older weeks are saved as `reports/scan-YYYY-MM-DD.md`.
+**Where to read it:** `reports/brief.md` is the short morning dashboard (top growth picks: Canada, US, other + your holdings). `reports/latest.md` in the GitHub phone app or on github.com. It shows as a clean table. Older weeks are saved as `reports/scan-YYYY-MM-DD.md`.
 
 ## How stocks are scored (out of 100)
 
@@ -28,7 +28,7 @@ The **market weather** (Fed rate, unemployment/Sahm rule, yield curve, Bitcoin t
 
 Edit `config.py` right on github.com (pencil icon) to update `HOLDINGS`, add to `WATCHLIST`, or adjust the rules. The next run picks it up.
 
-To run a scan right now: **Actions** tab → **Weekly TFSA scan** → **Run workflow**.
+To run a scan right now: **Actions** tab → **Daily TFSA scan** → **Run workflow**.
 
 ## Notes
 
