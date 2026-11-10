@@ -1,6 +1,6 @@
 # ☀️ Morning brief · Nov 10
 
-**Market:** NEUTRAL / CAUTIOUS · BTC $73,657 (Testing band)
+**Market:** NEUTRAL / CAUTIOUS · BTC $73,891 (Testing band)
 
 ## 🇨🇦 Canada growth (no FX fee)
 **1. BAM.TO** BROOKFIELD ASSET MANAGEMENT  · $76.48 · Growth 95/100 · 🔔 ENTRY SIGNAL
@@ -16,17 +16,17 @@
    - Passes Buffett, Lynch, O'Neil, Greenblatt
 
 ## 🇺🇸 US growth
-**1. MPWR** Monolithic Power Systems, In · $1,388.05 · Growth 88/100 · 🔔 STRONG ENTRY SIGNAL · 💱 1.5% FX fee
-   - Sales +63% · Earnings +51% · P/E 76
-   - Just broke back above its trend line
+**1. HNI** HNI Corporation · $49.75 · Growth 91/100 · 💱 1.5% FX fee
+   - Sales +133% · Earnings +118% · P/E 166
+   - Uptrend, +69% in 6 months
+   - Passes Cowan, Lynch, O'Neil, Greenblatt
+**2. FIVE** Five Below, Inc. · $253.76 · Growth 90/100 · 🔔 ENTRY SIGNAL · 💱 1.5% FX fee
+   - Sales +23% · Earnings +418% · P/E 23
+   - Uptrend, +19% in 6 months
    - Passes Cowan, Buffett, Lynch, O'Neil
-**2. CLX** Clorox Company (The) · $105.53 · Growth 88/100 · 💱 1.5% FX fee
-   - Sales +33% · Earnings +112% · P/E 19
-   - Just broke back above its trend line
-   - Passes Cowan, O'Neil, Greenblatt
-**3. CVNA** Carvana Co. · $76.26 · Growth 87/100 · 💱 1.5% FX fee
-   - Sales +42% · Earnings +91% · P/E 37
-   - Just broke back above its trend line
+**3. MBIN** Merchants Bancorp · $53.41 · Growth 89/100 · 💱 1.5% FX fee
+   - Sales +50% · Earnings +92% · P/E 9
+   - Uptrend, +21% in 6 months
    - Passes Cowan, Lynch, O'Neil
 
 ## 🌐 Other (metals, crypto, themes)
