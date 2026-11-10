@@ -2,12 +2,12 @@
 
 **Market weather: NEUTRAL / CAUTIOUS**
 
-- Fed data unavailable (HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=90))
-- Jobs data unavailable (HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=90))
-- Yield curve unavailable (HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=90))
-- Bitcoin $74,708 - Testing band (+0.5% vs 20-week)
+- Short-term rates 4.03% - Fed has been hiking
+- Jobs data unavailable this run (FRED blocked) - see the Sunday report
+- Yield curve (10y-3m) +0.83 - recently un-inverted (has come before past recessions)
+- Bitcoin $74,683 - Testing band (+0.5% vs 20-week)
 
-Scanned 729 stocks/ETFs. Each investor's rules are worth 20 points (total out of 100). 'Passes' = how many investors' rules it meets (14+/20).
+Scanned 730 stocks/ETFs. Each investor's rules are worth 20 points (total out of 100). 'Passes' = how many investors' rules it meets (14+/20).
 
 ## Your holdings
 | Ticker | Score | Passes | Verdict | Trend | Why |
@@ -43,7 +43,7 @@ Scanned 729 stocks/ETFs. Each investor's rules are worth 20 points (total out of
 | **FOXA** Fox Corporation | 83 | 4/5 | CORE | Uptrend (+7%) | Cowan, Buffett, O'Neil, Greenblatt · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
 | **FOX** Fox Corporation | 83 | 4/5 | CORE | Uptrend (+7%) | Cowan, Buffett, O'Neil, Greenblatt · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
 | **NXPI** NXP Semiconductors N.V | 83 | 4/5 | CORE | JUST RECLAIMED band (+5%) | Cowan, Buffett, Lynch, Greenblatt · News: NXP Semiconductors N.V. stock underperforms Friday when compared to competitors  |
-| **APA** APA Corporation | 82 | 4/5 | CORE | Uptrend (+6%) | Cowan, Buffett, O'Neil, Greenblatt · News: APA Corporation (APA) reports earnings tomorrow: what to expect - The Globe and  |
+| **APA** APA Corporation | 82 | 4/5 | CORE | Uptrend (+6%) | Cowan, Buffett, O'Neil, Greenblatt · News: Are Wall Street Analysts Predicting APA Corporation Stock Will Climb or Sink? -  |
 | **META** Meta Platforms, Inc. | 82 | 4/5 | CORE | Testing band (+1%) | Buffett, Lynch, O'Neil, Greenblatt · News: Meta Platforms, Inc. (META) is Attracting Investor Attention: Here is What You S |
 | **ATZ.TO** ARITZIA INC | 82 | 4/5 | CORE | Uptrend (+15%) | Cowan, Buffett, Lynch, O'Neil · News: TSX:ATZ in Focus: Aritzia, Inc. Faces a Fresh Investor Test as Markets Track the |
 | **DSV.TO** DISCOVERY MINING LTD | 82 | 4/5 | CORE | JUST RECLAIMED band (+6%) | Cowan, Buffett, O'Neil, Greenblatt · News: Discovery Mining (TSX:DSV) Stock Gains 15.28% as Gold Rebounds and Timmins Expan |
