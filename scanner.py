@@ -114,15 +114,8 @@ def get_info(ticker, tries=3):
 
 def get_fred(series_id):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-    for n in range(3):
-        try:
-            r = requests.get(url, headers=UA, timeout=90)
-            r.raise_for_status()
-            break
-        except Exception:
-            if n == 2:
-                raise
-            time.sleep(15)
+    r = requests.get(url, headers=UA, timeout=20)   # FRED often blocks cloud runners
+    r.raise_for_status()
     df = pd.read_csv(io.StringIO(r.text))
     df.columns = ["date", "value"]
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
@@ -252,15 +245,26 @@ def greenblatt_ranks(df):
 
 
 # =============================================================== macro =====
+def yahoo_weekly(sym):
+    import yfinance as yf
+    s = yf.download(sym, period="3y", interval="1wk", auto_adjust=True, progress=False)["Close"]
+    if isinstance(s, pd.DataFrame):
+        s = s.iloc[:, 0]
+    return s.dropna()
+
+
 def macro_weather():
     out, notes = {}, []
     try:
-        ff = get_fred("FEDFUNDS")
-        cutting = ff.iloc[-1] < ff.iloc[-7]
-        notes.append(f"Fed funds rate {ff.iloc[-1]:.2f}% - " +
-                     ("Fed has been cutting over the last 6 months" if cutting else "Fed not cutting"))
+        # 3-month T-bill yield tracks the Fed's rate closely
+        tb = yahoo_weekly("^IRX")
+        cutting = tb.iloc[-1] < tb.iloc[-27] - 0.2
+        hiking = tb.iloc[-1] > tb.iloc[-27] + 0.2
+        notes.append(f"Short-term rates {tb.iloc[-1]:.2f}% - " + (
+            "Fed has been cutting over the last 6 months" if cutting else
+            "Fed has been hiking" if hiking else "Fed on hold"))
     except Exception as e:
-        notes.append(f"Fed data unavailable ({e})")
+        notes.append(f"Rate data unavailable ({e})")
     try:
         ur = get_fred("UNRATE")
         sahm = ur.iloc[-3:].mean() - ur.iloc[-12:].min()
@@ -269,13 +273,15 @@ def macro_weather():
             "RECESSION WARNING (Sahm rule triggered)" if sahm >= 0.5 else
             "jobs weakening" if sahm >= 0.3 else "jobs stable"))
     except Exception as e:
-        notes.append(f"Jobs data unavailable ({e})")
+        notes.append("Jobs data unavailable this run (FRED blocked) - see the Sunday report")
     try:
-        yc = get_fred("T10Y2Y")
+        # 10-year minus 3-month yield (the curve the Fed's own recession model uses)
+        ten, three = yahoo_weekly("^TNX"), yahoo_weekly("^IRX")
+        yc = (ten - three).dropna()
         out["yc"] = yc.iloc[-1]
-        notes.append(f"Yield curve (10y-2y) {yc.iloc[-1]:.2f} - " + (
+        notes.append(f"Yield curve (10y-3m) {yc.iloc[-1]:+.2f} - " + (
             "inverted (late cycle)" if yc.iloc[-1] < 0 else
-            "recently un-inverted (has come before past recessions)" if yc.iloc[-120:].min() < 0 else "normal"))
+            "recently un-inverted (has come before past recessions)" if yc.iloc[-104:].min() < 0 else "normal"))
     except Exception as e:
         notes.append(f"Yield curve unavailable ({e})")
     try:
