@@ -19,7 +19,8 @@ def _row(r):
     return {
         "t": r["ticker"], "n": str(r["name"])[:34], "p": _num(r["price"]),
         "score": int(r["total"]), "passes": int(r["passes"]),
-        "checks": {k: bool(r[k] >= config.PASS_MARK) for k in inv},
+        "raw": int(r.get("passes_raw", r["passes"])), "avail": int(r.get("legends_avail", 5)),
+        "checks": {k: (None if _num(r[k]) is None else bool(r[k] >= config.PASS_MARK)) for k in inv},
         "signal": r["signal"] if isinstance(r["signal"], str) else "",
         "cur": r["currency"],
         "cdr": config.CDR_MAP.get(r["ticker"], ""),
@@ -122,10 +123,10 @@ function card(r){const c=el("div","card");const top=el("div","top");
  const s=el("div","score");s.append(el("div","big",r.score),el("div","small",`/100 · ${money(r.p)}`));top.append(l,s);c.append(top);
  const bd=el("div","badges");
  if(r.signal.includes("STRONG"))bd.append(el("span","b strong","🔔 STRONG ENTRY"));else if(r.signal.includes("ENTRY"))bd.append(el("span","b sig","🔔 Entry signal"));
- bd.append(el("span","b",`${r.passes}/5 legends agree`));
+ bd.append(el("span","b",r.avail<5?`${r.raw}/${r.avail} legends agree`:`${r.raw}/5 legends agree`));
  if(r.cur==="CAD")bd.append(el("span","b ca","🇨🇦 No FX fee"));else if(r.cur==="CDR")bd.append(el("span","b ca",`🇨🇦 Buy as ${r.cdr} (CDR)`));else bd.append(el("span","b fx","💱 1.5% FX fee"));
  if(r.cyc)bd.append(el("span","b cyc","⚠️ Commodity"));c.append(bd);
- const lg=el("div","legends");for(const k in L)lg.append(el("span","lg"+(r.checks[k]?" y":""),(r.checks[k]?"✓ ":"")+L[k]));c.append(lg);
+ const lg=el("div","legends");for(const k in L)lg.append(el("span","lg"+(r.checks[k]?" y":""),(r.checks[k]?"✓ ":"")+L[k]+(r.checks[k]===null?" (no data)":"")));c.append(lg);
  const st=el("div","stats");[["Sales",pct(r.rg),r.rg],["Earnings",r.eg>5?"5x+":pct(r.eg),r.eg],["P/E",r.pe?Math.round(r.pe):"–",null],["vs line",r.band==null?"–":(r.band>=0?"+":"")+Math.round(r.band)+"%",r.band]]
  .forEach(([k,v,n])=>{const d=el("div","st");const b=el("b",n==null?"":(n>=0?"pos":"neg"),v);d.append(b,el("span",null,k));st.append(d)});c.append(st);
  const w=why(r);if(w.length){const u=el("ul","why");w.forEach(x=>u.append(el("li",null,x)));c.append(u)}
@@ -151,7 +152,7 @@ const t2=el("table");t2.innerHTML="<tr><th>Holding</th><th>Price</th><th>Trend</
 D.hold.forEach(r=>{const tr=el("tr");const f=r.signal?r.signal.split(" - ")[0]:"OK";const fe=el("td","flag",f);fe.style.color=f.includes("EXIT")?"var(--bad)":f.includes("TRIM")?"var(--warn)":f.includes("ADD")?"var(--good)":"var(--mute)";
  tr.append(el("td",null,r.t),el("td",null,money(r.p)),el("td",null,`${r.trend} (${r.band>=0?"+":""}${Math.round(r.band||0)}%)`),fe);t2.append(tr)});app.append(t2);
 const ft=el("div","foot");const det=el("details");det.append(el("summary",null,"How the scores work"));
-det.append(el("p",null,"Each of 5 legendary investors' rules is worth 20 points (100 total). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line). Buffett = profitable, low debt, fair price. Lynch = growth at a reasonable price. O'Neil = fast-rising earnings near highs. Greenblatt = high returns on capital + cheap. 5/5 is very rare: cheap (Buffett, Greenblatt) and hot (O'Neil) usually pull opposite ways."));
+det.append(el("p",null,"Each of 5 legendary investors' rules is worth 20 points (100 total). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line). Buffett = profitable, low debt, fair price. Lynch = growth at a reasonable price. O'Neil = fast-rising earnings near highs. Greenblatt = high returns on capital + cheap. 5/5 is very rare: cheap (Buffett, Greenblatt) and hot (O'Neil) usually pull opposite ways. If Yahoo has no data for a legend's test (common for banks, insurers and holding companies like Berkshire), that legend is marked 'no data' and left out instead of counting as a fail, and the score is scaled to the legends that could judge it."));
 det.append(el("p",null,"Spread today: "+Object.entries(D.counts).map(([k,v])=>`${k}/5: ${v}`).join(" · ")));
 ft.append(det,el("p",null,"Research tool only, not financial advice. Check the news before acting, and keep speculative bets small."));app.append(ft);
 </script></body></html>"""

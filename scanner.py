@@ -224,15 +224,30 @@ CYCLICAL = ("Basic Materials", "Energy")
 
 
 def lynch(f):
+    """Lynch's PEG: P/E divided by growth. Under 1 = growth on sale.
+    Backups when Yahoo has no PEG: P/E / earnings growth, then PEGY
+    (P/E / (growth + dividend yield), Lynch's own rule for steady dividend payers),
+    then sales growth. Returns None (no data, not a fail) if growth can't be found."""
     if is_fund(f):
         return 0, None
+    pe = f.get("trailingPE") or f.get("forwardPE")
     peg = f.get("trailingPegRatio") or f.get("pegRatio")
-    if not peg:
-        pe, g = f.get("trailingPE"), f.get("earningsGrowth")
-        if pe and g and g > 0:
-            peg = pe / (g * 100)
     if not peg or peg <= 0:
-        return 0, None
+        if not pe or pe <= 0:
+            return 0, None          # no profits: Lynch genuinely passes on these
+        g = f.get("earningsGrowth")
+        if g is None:
+            g = f.get("earningsQuarterlyGrowth")
+        if g is None:
+            g = f.get("revenueGrowth")
+        if g is None:
+            return None, None       # profitable but no growth data: don't punish
+        # Yahoo: growth is a fraction (0.12 = 12%); dividendYield is already in % (2.5 = 2.5%)
+        y = min(f.get("dividendYield") or 0, 15)
+        denom = g * 100 + y
+        if denom <= 0:
+            return 0, None          # shrinking: a real fail
+        peg = pe / denom
     pts = 20 if peg <= config.GOOD_PEG else 13 if peg <= 1.5 else 6 if peg <= 2 else 0
     # Lynch's own warning: miners/oil look cheapest at the top of their cycle,
     # because profits are temporarily huge. Cap the score so they don't dominate.
@@ -253,13 +268,33 @@ def oneil(f, tr, bench_ret):
 
 
 def greenblatt_ranks(df):
-    """Magic Formula: rank everyone on return on capital and earnings yield
-    (skipping banks/insurers/utilities like Greenblatt does). 0-20 points."""
-    ok = (~df["sector"].isin(["Financial Services", "Utilities"])) & df["is_stock"]
-    roc = df["returnOnAssets"].where(ok)
-    ey = (1 / df["enterpriseToEbitda"]).where(ok & (df["enterpriseToEbitda"] > 0))
-    score = roc.rank(pct=True) + ey.rank(pct=True)
-    return (score.rank(pct=True) * 20).fillna(0).round().astype(int)
+    """Magic Formula: high return on capital + high earnings yield, ranked 0-20.
+    Banks, insurers and utilities don't report the numbers his formula uses, so
+    they're ranked against each other on return on equity + earnings yield (1/PE)
+    instead of getting a 0. Missing data = None (no data), not a fail."""
+    fin = df["sector"].isin(["Financial Services", "Utilities"])
+    stock = df["is_stock"].astype(bool)
+    pe = pd.to_numeric(df["pe"], errors="coerce")
+    out = pd.Series(float("nan"), index=df.index)
+
+    def rank(mask, roc, ey):
+        r1, r2 = roc.where(mask).rank(pct=True), ey.where(mask).rank(pct=True)
+        both = pd.concat([r1, r2], axis=1).mean(axis=1)   # use whichever exists
+        return (both.rank(pct=True) * 20).round()
+
+    roa = pd.to_numeric(df["returnOnAssets"], errors="coerce")
+    roe = pd.to_numeric(df["returnOnEquity"], errors="coerce")
+    ev = pd.to_numeric(df["enterpriseToEbitda"], errors="coerce")
+    ey_main = (1 / ev).where(ev > 0)
+    ey_main = ey_main.fillna((1 / pe).where(pe > 0))
+    main = stock & ~fin
+    out[main] = rank(main, roa.fillna(roe), ey_main)[main]
+    finm = stock & fin
+    out[finm] = rank(finm, roe.fillna(roa), (1 / pe).where(pe > 0))[finm]
+    # losing money = genuinely fails the Magic Formula
+    out[stock & ((pe <= 0) | (pe.isna() & (roa.fillna(0) <= 0)))] = 0
+    out[~stock] = 0
+    return out
 
 
 # =============================================================== macro =====
@@ -455,7 +490,7 @@ def add_growth_score(df):
     rg = pd.to_numeric(df["rev_growth"], errors="coerce").fillna(0).clip(-0.5, 1.0)
     eg = pd.to_numeric(df["eps_growth"], errors="coerce").fillna(0).clip(-1, 2.0)
     score = (rg.rank(pct=True) * 30 + eg.rank(pct=True) * 20 +
-             df["oneil"] * 1.0 + df["lynch"] * 0.5 + df["cowan"] * 0.75 + df["buffett"] * 0.25)
+             df["oneil"] * 1.0 + df["lynch"].fillna(10) * 0.5 + df["cowan"] * 0.75 + df["buffett"] * 0.25)
     # Miners/oil "growth" is mostly commodity prices, not the business: knock 15% off
     score = score.where(~df["sector"].isin(CYCLICAL), score * 0.85)
     df["growth_score"] = score.clip(upper=100).round().astype(int)
@@ -533,6 +568,7 @@ def write_reports(df, macro):
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
             "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock",
             "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score",
+            "passes_raw", "legends_avail", "legends_na",
             "target", "n_analysts", "upside", "st_bull"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
@@ -644,6 +680,7 @@ def main(quick=False):
                      "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
                      "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
                      "sector": f.get("sector"), "returnOnAssets": f.get("returnOnAssets"),
+                     "returnOnEquity": f.get("returnOnEquity"),
                      "enterpriseToEbitda": f.get("enterpriseToEbitda"),
                      "rev_growth": f.get("revenueGrowth"),
                      "eps_growth": f.get("earningsQuarterlyGrowth"),
@@ -658,8 +695,14 @@ def main(quick=False):
     inv = ["cowan", "buffett", "lynch", "oneil", "greenblatt"]
     label = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch",
              "oneil": "O'Neil", "greenblatt": "Greenblatt"}
-    df["total"] = df[inv].sum(axis=1)
-    df["passes"] = (df[inv] >= config.PASS_MARK).sum(axis=1)
+    # A legend with no data (None) is left out, not counted as a fail:
+    # the score and the "legends agree" count are scaled to the legends that could judge it.
+    avail = df[inv].notna().sum(axis=1).clip(lower=1)
+    raw = (df[inv] >= config.PASS_MARK).sum(axis=1)
+    df["total"] = (df[inv].sum(axis=1) * 5 / avail).round().astype(int)
+    df["passes"] = (raw * 5 / avail + 1e-9).round().astype(int)
+    df["passes_raw"], df["legends_avail"] = raw, avail
+    df["legends_na"] = df.apply(lambda r: ", ".join(label[c] for c in inv if pd.isna(r[c])), axis=1)
     df["passed"] = df.apply(lambda r: ", ".join(label[c] for c in inv if r[c] >= config.PASS_MARK), axis=1)
     df = df.sort_values(["passes", "total"], ascending=False).reset_index(drop=True)
 
