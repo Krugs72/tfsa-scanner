@@ -4,7 +4,7 @@ Tickers use Yahoo Finance format: Canadian stocks end in .TO (TSX) or .V (Ventur
 """
 
 # What you own right now. These always show at the top of the report.
-HOLDINGS = ["MSTR", "INFQ", "IMSR", "CCO.TO", "VEQT.TO", "XDIV.TO"]
+HOLDINGS = ["VEQT.TO", "XDIV.TO", "MSTR", "INFQ", "IMSR", "CCO.TO", "CGL-C.TO"]  # MSTR held as Cboe Canada CDR; trend uses US MSTR
 
 # Extra names to always include (on top of the S&P 500 + TSX Composite scan)
 WATCHLIST = [
