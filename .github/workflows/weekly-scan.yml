@@ -2,8 +2,8 @@ name: Daily TFSA scan
 
 on:
   schedule:
-    # Weekday mornings 11:47 UTC (~5:47am Edmonton), before the market opens
-    - cron: "47 11 * * 1-5"
+    # Weekday mornings 10:17 UTC (~4:17am Edmonton). GitHub often starts scheduled runs late, so this leaves room before the 6:41am brief
+    - cron: "17 10 * * 1-5"
   workflow_dispatch:      # lets you hit "Run workflow" by hand in the Actions tab
 
 permissions:
