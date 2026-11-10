@@ -416,7 +416,9 @@ def add_growth_score(df):
     eg = pd.to_numeric(df["eps_growth"], errors="coerce").fillna(0).clip(-1, 2.0)
     score = (rg.rank(pct=True) * 30 + eg.rank(pct=True) * 20 +
              df["oneil"] * 1.0 + df["lynch"] * 0.5 + df["cowan"] * 0.75 + df["buffett"] * 0.25)
-    df["growth_score"] = score.round().astype(int)
+    # Miners/oil "growth" is mostly commodity prices, not the business: knock 15% off
+    score = score.where(~df["sector"].isin(CYCLICAL), score * 0.85)
+    df["growth_score"] = score.clip(upper=100).round().astype(int)
     return df
 
 
@@ -426,7 +428,7 @@ def growth_bullets(r):
     if rg == rg and rg is not None:
         stats.append(f"Sales {_pct(rg)}")
     if eg == eg and eg is not None:
-        stats.append(f"Earnings {_pct(eg)}")
+        stats.append("Earnings 5x+ (low base, one-off?)" if eg > 5 else f"Earnings {_pct(eg)}")
     if pe == pe and pe:
         stats.append(f"P/E {pe:.0f}")
     if stats:
