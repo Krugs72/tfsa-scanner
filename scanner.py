@@ -114,8 +114,15 @@ def get_info(ticker, tries=3):
 
 def get_fred(series_id):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-    r = requests.get(url, headers=UA, timeout=30)
-    r.raise_for_status()
+    for n in range(3):
+        try:
+            r = requests.get(url, headers=UA, timeout=90)
+            r.raise_for_status()
+            break
+        except Exception:
+            if n == 2:
+                raise
+            time.sleep(15)
     df = pd.read_csv(io.StringIO(r.text))
     df.columns = ["date", "value"]
     df["value"] = pd.to_numeric(df["value"], errors="coerce")
@@ -123,6 +130,18 @@ def get_fred(series_id):
 
 
 def get_btc_weekly():
+    """Bitcoin weekly closes. Yahoo first (no key), CoinGecko as backup."""
+    try:
+        import yfinance as yf
+        s = yf.download("BTC-USD", period="2y", interval="1wk", auto_adjust=True,
+                        progress=False)["Close"]
+        if isinstance(s, pd.DataFrame):
+            s = s.iloc[:, 0]
+        s = s.dropna()
+        if len(s) > 30:
+            return s
+    except Exception:
+        pass
     url = ("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart"
            "?vs_currency=usd&days=730&interval=daily")
     r = requests.get(url, headers=UA, timeout=30)
@@ -190,6 +209,9 @@ def buffett(f):
     return pts, ", ".join(why)
 
 
+CYCLICAL = ("Basic Materials", "Energy")
+
+
 def lynch(f):
     if is_fund(f):
         return 0, None
@@ -201,6 +223,10 @@ def lynch(f):
     if not peg or peg <= 0:
         return 0, None
     pts = 20 if peg <= config.GOOD_PEG else 13 if peg <= 1.5 else 6 if peg <= 2 else 0
+    # Lynch's own warning: miners/oil look cheapest at the top of their cycle,
+    # because profits are temporarily huge. Cap the score so they don't dominate.
+    if f.get("sector") in CYCLICAL:
+        pts = min(pts, 10)
     return pts, round(peg, 2)
 
 
@@ -292,7 +318,10 @@ def sentiment(ticker, name):
         q = requests.utils.quote(f'"{name}" stock when:7d')
         r = requests.get(f"https://news.google.com/rss/search?q={q}&hl=en-CA&gl=CA&ceid=CA:en",
                          headers=UA, timeout=20)
-        heads = [i.findtext("title") or "" for i in ET.fromstring(r.content).iter("item")][:25]
+        junk = re.compile(r"stock price|quote|interactive stock chart|seasonal returns|"
+                          r"stock forecast|historical prices|stock chart", re.I)
+        heads = [h for h in (i.findtext("title") or "" for i in ET.fromstring(r.content).iter("item"))
+                 if not junk.search(h)][:25]
     except Exception:
         pass
     time.sleep(1)
