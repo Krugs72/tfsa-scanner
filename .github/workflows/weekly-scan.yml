@@ -1,0 +1,36 @@
+name: Weekly TFSA scan
+
+on:
+  schedule:
+    # Saturdays 14:17 UTC (8:17am Edmonton), after the week's final prices are in
+    - cron: "17 14 * * 6"
+  workflow_dispatch:      # lets you hit "Run workflow" by hand in the Actions tab
+
+permissions:
+  contents: write         # so it can save the reports back into the repo
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install
+        run: pip install -r requirements.txt
+
+      - name: Run scanner
+        run: python scanner.py
+
+      - name: Save reports to the repo
+        run: |
+          git config user.name "tfsa-scanner bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add reports/
+          git commit -m "Weekly scan $(date -u +%Y-%m-%d)" || echo "No changes"
+          git push
