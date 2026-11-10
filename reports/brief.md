@@ -1,37 +1,33 @@
 # ☀️ Morning brief · Nov 10
 
-**Market:** NEUTRAL / CAUTIOUS · BTC $74,448 (Testing band)
+**Market:** NEUTRAL / CAUTIOUS · BTC $74,113 (Testing band)
 
 ## 🇨🇦 Canada growth (no FX fee)
 **1. BAM.TO** BROOKFIELD ASSET MANAGEMENT  · $76.48 · Growth 95/100 · 🔔 ENTRY SIGNAL
    - Sales +72% · Earnings +265% · P/E 19
    - Uptrend, +18% in 6 months
    - Passes Cowan, Buffett, Lynch, O'Neil
-**2. AYA.TO** AYA GOLD AND SILVER INC · $37.79 · Growth 93/100
-   - Sales +151% · Earnings +292% · P/E 37
-   - Just broke back above its trend line
-   - Passes Cowan, Buffett, O'Neil
-   - ⚠️ Commodity-driven: rides metal/oil prices
-**3. DSV.TO** DISCOVERY MINING LTD · $11.66 · Growth 93/100 · 🔔 STRONG ENTRY SIGNAL
-   - Sales +125% · Earnings +842% · P/E 27
-   - Just broke back above its trend line
-   - Passes Cowan, Buffett, O'Neil, Greenblatt
-   - ⚠️ Commodity-driven: rides metal/oil prices
+**2. ATZ.TO** ARITZIA INC · $162.05 · Growth 92/100 · 🔔 ENTRY SIGNAL
+   - Sales +44% · Earnings +204% · P/E 33
+   - Uptrend, +16% in 6 months
+   - Passes Cowan, Buffett, Lynch, O'Neil
+**3. RUS.TO** RUSSEL METALS · $76.83 · Growth 85/100
+   - Sales +56% · Earnings +259% · P/E 14
+   - Passes Buffett, Lynch, O'Neil, Greenblatt
 
 ## 🇺🇸 US growth
-**1. CLX** Clorox Company (The) · $105.53 · Growth 88/100 · 💱 1.5% FX fee
-   - Sales +33% · Earnings +112% · P/E 18
-   - Just broke back above its trend line
-   - Passes Cowan, O'Neil, Greenblatt
-**2. MPWR** Monolithic Power Systems, In · $1,388.05 · Growth 88/100 · 🔔 STRONG ENTRY SIGNAL · 💱 1.5% FX fee
-   - Sales +63% · Earnings +51% · P/E 65
+**1. MPWR** Monolithic Power Systems, In · $1,388.05 · Growth 88/100 · 🔔 STRONG ENTRY SIGNAL · 💱 1.5% FX fee
+   - Sales +63% · Earnings +51% · P/E 76
    - Just broke back above its trend line
    - Passes Cowan, Buffett, Lynch, O'Neil
-**3. PSX** Phillips 66 · $253.02 · Growth 88/100 · 🔔 ENTRY SIGNAL · 💱 1.5% FX fee
-   - Sales +46% · Earnings +4123% · P/E 8
-   - Uptrend, +45% in 6 months
-   - Passes Cowan, Buffett, O'Neil, Greenblatt
-   - ⚠️ Commodity-driven: rides metal/oil prices
+**2. CLX** Clorox Company (The) · $105.53 · Growth 88/100 · 💱 1.5% FX fee
+   - Sales +33% · Earnings +112% · P/E 19
+   - Just broke back above its trend line
+   - Passes Cowan, O'Neil, Greenblatt
+**3. CVNA** Carvana Co. · $76.26 · Growth 87/100 · 💱 1.5% FX fee
+   - Sales +42% · Earnings +91% · P/E 37
+   - Just broke back above its trend line
+   - Passes Cowan, Lynch, O'Neil
 
 ## 🌐 Other (metals, crypto, themes)
 - **WPM.TO** $202.99 · JUST RECLAIMED band (+9% vs line)
