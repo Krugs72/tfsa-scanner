@@ -232,6 +232,9 @@ def lynch(f):
         return 0, None
     pe = f.get("trailingPE") or f.get("forwardPE")
     peg = f.get("trailingPegRatio") or f.get("pegRatio")
+    eg = f.get("earningsGrowth")
+    if eg is not None and eg > 1.0:
+        peg = None   # earnings more than doubled: likely one-off, use the capped backup below
     if not peg or peg <= 0:
         if not pe or pe <= 0:
             return 0, None          # no profits: Lynch genuinely passes on these
@@ -244,7 +247,16 @@ def lynch(f):
             return None, None       # profitable but no growth data: don't punish
         # Yahoo: growth is a fraction (0.12 = 12%); dividendYield is already in % (2.5 = 2.5%)
         y = min(f.get("dividendYield") or 0, 15)
-        denom = g * 100 + y
+        # Lynch: growth over ~25-50%/yr rarely lasts; one-off jumps (acquisitions,
+        # accounting gains) would make the stock look falsely cheap. Cap at 50%.
+        # Also use next year's expected growth (trailing P/E / forward P/E - 1), which
+        # strips out one-time gains; take the more conservative of the two.
+        tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
+        if tpe and fpe and tpe > 0 and fpe > 0:
+            g = min(g, tpe / fpe - 1)
+        if g + y / 100 <= 0:
+            return 0, None
+        denom = min(g, 0.50) * 100 + y
         if denom <= 0:
             return 0, None          # shrinking: a real fail
         peg = pe / denom
