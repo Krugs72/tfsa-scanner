@@ -113,7 +113,9 @@ INFO_KEYS = ["shortName", "quoteType", "sector", "trailingPE", "forwardPE",
              "freeCashflow", "marketCap", "earningsGrowth", "earningsQuarterlyGrowth",
              "revenueGrowth", "trailingPegRatio", "pegRatio", "enterpriseToEbitda",
              "fiftyTwoWeekHigh", "dividendYield", "currency",
-             "targetMeanPrice", "numberOfAnalystOpinions"]
+             "targetMeanPrice", "numberOfAnalystOpinions",
+             "priceToBook", "currentRatio", "operatingCashflow", "netIncomeToCommon",
+             "averageVolume", "regularMarketPrice"]
 
 
 def get_info(ticker, tries=3):
@@ -195,6 +197,7 @@ def cowan(closes):
     return {"price": round(price, 2), "pct_vs_band": round(ext * 100, 1),
             "above_200d": None if pd.isna(lm) else bool(price > lm),
             "ret_26w": round((price / float(w26) - 1) * 100, 1),
+            "ret_4w": round((price / float(closes.iloc[-5]) - 1) * 100, 1) if len(closes) > 5 else None,
             "off_high_pct": round((price / float(closes.iloc[-52:].max()) - 1) * 100, 1),
             "trend": trend, "cowan": pts}
 
@@ -277,6 +280,114 @@ def oneil(f, tr, bench_ret):
     if tr.get("off_high_pct") is not None and tr["off_high_pct"] >= -config.NEAR_HIGH * 100: pts += 4
     if tr.get("ret_26w") is not None and bench_ret is not None and tr["ret_26w"] > bench_ret + 10: pts += 5
     return pts
+
+
+def graham(f):
+    """Benjamin Graham (Buffett's teacher), 'defensive investor' rules: cheap on
+    earnings AND assets, strong balance sheet, pays a dividend. 0-20."""
+    if is_fund(f):
+        return 0
+    pe, pb = f.get("trailingPE"), f.get("priceToBook")
+    if not pe or pe <= 0:
+        return 0                                   # no profits: Graham passes
+    pts, tests = 0, 0
+    tests += 6; pts += 6 if pe <= 15 else 3 if pe <= 20 else 0
+    if pb and pb > 0:
+        tests += 6; pts += 6 if (pb <= 1.5 or pe * pb <= 22.5) else 3 if pe * pb <= 40 else 0
+    cr = f.get("currentRatio")
+    if cr is not None:
+        tests += 4; pts += 4 if cr >= 2 else 2 if cr >= 1.5 else 0
+    de = f.get("debtToEquity")
+    if de is not None:
+        tests += 2; pts += 2 if de / 100 <= 1 else 0
+    tests += 2; pts += 2 if (f.get("dividendYield") or 0) > 0 else 0
+    return round(pts * 20 / tests) if tests >= 10 else None
+
+
+def momentum_raw(closes):
+    """12-1 momentum: return from 12 months ago to 1 month ago (skip the last month,
+    which tends to reverse). Ranked across all stocks later."""
+    if len(closes) < 53:
+        return None
+    return float(closes.iloc[-5]) / float(closes.iloc[-53]) - 1
+
+
+def _row(df, *names):
+    for n in names:
+        if n in df.index:
+            return df.loc[n]
+    return None
+
+
+def piotroski(ticker):
+    """Joseph Piotroski's F-Score: 9 yes/no checks on whether the business is really
+    getting stronger (profit backed by cash, less debt, no new shares, better margins).
+    Returns (score 0-20 or None, f_score, shares_change)."""
+    import yfinance as yf
+    try:
+        t = yf.Ticker(ticker)
+        inc, bal, cf = t.financials, t.balance_sheet, t.cashflow
+    except Exception:
+        return None, None, None
+    if inc is None or bal is None or cf is None or inc.shape[1] < 2 or bal.shape[1] < 2:
+        return None, None, None
+
+    def v(df, names, col):
+        r = _row(df, *names)
+        try:
+            x = float(r.iloc[col])
+            return None if pd.isna(x) else x
+        except Exception:
+            return None
+    ni0, ni1 = v(inc, ["Net Income", "Net Income Common Stockholders"], 0), v(inc, ["Net Income", "Net Income Common Stockholders"], 1)
+    ta0, ta1 = v(bal, ["Total Assets"], 0), v(bal, ["Total Assets"], 1)
+    cfo0 = v(cf, ["Operating Cash Flow", "Cash Flow From Continuing Operating Activities"], 0)
+    ltd0, ltd1 = v(bal, ["Long Term Debt"], 0), v(bal, ["Long Term Debt"], 1)
+    ca0, ca1 = v(bal, ["Current Assets"], 0), v(bal, ["Current Assets"], 1)
+    cl0, cl1 = v(bal, ["Current Liabilities"], 0), v(bal, ["Current Liabilities"], 1)
+    sh0, sh1 = v(bal, ["Ordinary Shares Number", "Share Issued"], 0), v(bal, ["Ordinary Shares Number", "Share Issued"], 1)
+    gp0, gp1 = v(inc, ["Gross Profit"], 0), v(inc, ["Gross Profit"], 1)
+    rv0, rv1 = v(inc, ["Total Revenue"], 0), v(inc, ["Total Revenue"], 1)
+    checks = []
+    if ni0 is not None and ta0: checks.append(ni0 / ta0 > 0)
+    if cfo0 is not None: checks.append(cfo0 > 0)
+    if None not in (ni0, ni1) and ta0 and ta1: checks.append(ni0 / ta0 > ni1 / ta1)
+    if cfo0 is not None and ni0 is not None: checks.append(cfo0 > ni0)
+    if ta0 and ta1: checks.append((ltd0 or 0) / ta0 <= (ltd1 or 0) / ta1)
+    if ca0 and ca1 and cl0 and cl1: checks.append(ca0 / cl0 > ca1 / cl1)
+    shares_chg = (sh0 / sh1 - 1) if sh0 and sh1 else None
+    if shares_chg is not None: checks.append(shares_chg <= 0.01)
+    if gp0 and gp1 and rv0 and rv1: checks.append(gp0 / rv0 > gp1 / rv1)
+    if rv0 and rv1 and ta0 and ta1: checks.append(rv0 / ta0 > rv1 / ta1)
+    if len(checks) < 6:
+        return None, None, shares_chg
+    f = sum(checks) * 9 / len(checks)              # scale to a 9-point F-score
+    return round(f * 20 / 9), round(f, 1), shares_chg
+
+
+def red_flags(r, f):
+    """Automatic warning lights so bad data can't sneak a stock into the picks."""
+    flags = []
+    eg = r.get("eps_growth")
+    ocf, ni = f.get("operatingCashflow"), f.get("netIncomeToCommon")
+    tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
+    fwd_g = (tpe / fpe - 1) if tpe and fpe and tpe > 0 and fpe > 0 else None
+    if eg is not None and eg > 1.0 and ((ocf is not None and ni and ocf < ni) or
+                                         (fwd_g is not None and fwd_g < 0.20)):
+        flags.append("one-off earnings jump?")
+    rg = r.get("rev_growth")
+    if rg is not None and rg > 0.5 and fwd_g is not None and fwd_g < 0.15:
+        flags.append("sales jump may be an acquisition")
+    up, na = r.get("upside"), f.get("numberOfAnalystOpinions") or 0
+    if up is not None and up < 0 and na >= 3:
+        flags.append("analyst target below price")
+    if r.get("ret_4w") is not None and r["ret_4w"] < -15:
+        flags.append(f"fell {abs(r['ret_4w']):.0f}% in a month")
+    mcap = f.get("marketCap") or 0
+    vol, px = f.get("averageVolume") or 0, r.get("price") or 0
+    if r.get("is_stock") and (0 < mcap < 3e8 or 0 < vol * px < 2e6):
+        flags.append("small / thinly traded")
+    return flags
 
 
 def greenblatt_ranks(df):
@@ -481,7 +592,7 @@ def signal(r, regime, held):
         if "RECLAIMED" in trend:
             return "ADD WATCH - trend just turned back up"
         return ""
-    if (up and r["passes"] >= config.ENTRY_MIN_PASSES
+    if (up and r["passes"] >= config.ENTRY_MIN_PASSES and r.get("pick_ok", True)
             and r["buffett"] >= config.ENTRY_MIN_BUFFETT and regime != "RISK-OFF"):
         strong = "RECLAIMED" in trend and r["passes"] >= 4
         return "STRONG ENTRY SIGNAL" if strong else "ENTRY SIGNAL"
@@ -580,7 +691,9 @@ def write_reports(df, macro):
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
             "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock",
             "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score",
-            "passes_raw", "legends_avail", "legends_na",
+            "passes_raw", "legends_avail", "legends_na", "agree", "graham", "momentum",
+            "piotroski", "f_score", "shares_chg", "red_flags", "red_flag_count", "pick_ok",
+            "ret_4w", "total_raw",
             "target", "n_analysts", "upside", "st_bull"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
@@ -688,7 +801,7 @@ def main(quick=False):
         time.sleep(0.4)
         b, bnotes = buffett(f)
         lp, peg = lynch(f)
-        rows.append({"ticker": t, "name": f.get("shortName") or t, **tr,
+        row = {"ticker": t, "name": f.get("shortName") or t, **tr,
                      "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
                      "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
                      "sector": f.get("sector"), "returnOnAssets": f.get("returnOnAssets"),
@@ -701,21 +814,58 @@ def main(quick=False):
                      "n_analysts": f.get("numberOfAnalystOpinions"),
                      "upside": (f["targetMeanPrice"] / tr["price"] - 1)
                      if f.get("targetMeanPrice") and tr.get("price") else None,
-                     "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None})
+                     "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None,
+                     "graham": graham(f), "mom_raw": momentum_raw(prices[t])}
+        row["red_flags"] = red_flags(row, f)
+        rows.append(row)
     df = pd.DataFrame(rows)
     df["greenblatt"] = greenblatt_ranks(df)
-    inv = ["cowan", "buffett", "lynch", "oneil", "greenblatt"]
-    label = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch",
-             "oneil": "O'Neil", "greenblatt": "Greenblatt"}
-    # A legend with no data (None) is left out, not counted as a fail:
-    # the score and the "legends agree" count are scaled to the legends that could judge it.
-    avail = df[inv].notna().sum(axis=1).clip(lower=1)
-    raw = (df[inv] >= config.PASS_MARK).sum(axis=1)
-    df["total"] = (df[inv].sum(axis=1) * 5 / avail).round().astype(int)
-    df["passes"] = (raw * 5 / avail + 1e-9).round().astype(int)
-    df["passes_raw"], df["legends_avail"] = raw, avail
+    # Momentum: rank the 12-1 month return across all stocks (top = 20)
+    mr = pd.to_numeric(df["mom_raw"], errors="coerce")
+    df["momentum"] = (mr.rank(pct=True) * 20).round()
+    df.loc[~df["is_stock"].astype(bool), "momentum"] = 0
+
+    inv, label = config.LEGENDS, config.LEGEND_LABELS
+    df["piotroski"] = float("nan")
+    df["f_score"], df["shares_chg"] = float("nan"), float("nan")
+
+    def score(d):
+        cols = [c for c in inv if c in d]
+        avail = d[cols].notna().sum(axis=1).clip(lower=1)
+        raw = (d[cols] >= config.PASS_MARK).sum(axis=1)
+        d["total_raw"] = (d[cols].sum(axis=1) * 100 / (20 * avail)).round()
+        d["passes_raw"], d["legends_avail"] = raw, avail
+        d["passes"] = (raw * 5 / avail + 1e-9).round().astype(int)   # agreement on a 0-5 scale
+        return d
+    df = score(df)
+
+    # Piotroski needs full financial statements (3 extra lookups per stock), so only
+    # check the ~250 best candidates + holdings. Everyone else shows "no data" for it.
+    cand = list(dict.fromkeys(
+        [t for t in config.HOLDINGS if t in set(df.ticker)] +
+        list(df[df.is_stock.astype(bool)].sort_values("total_raw", ascending=False)
+             .ticker.head(0 if quick else config.PIOTROSKI_TOP_N))))
+    print(f"    Piotroski F-Score on {len(cand)} candidates...")
+    for t in cand:
+        p, fs, sc = piotroski(t)
+        i = df.index[df.ticker == t][0]
+        df.at[i, "piotroski"], df.at[i, "f_score"], df.at[i, "shares_chg"] = p, fs, sc
+        if sc is not None and sc > 0.05:
+            df.at[i, "red_flags"] = list(df.at[i, "red_flags"]) + [f"new shares +{sc * 100:.0f}%"]
+        time.sleep(0.3)
+    df = score(df)
+
+    # Red flags: each one costs 5 points; serious ones (or 2+) block a stock from the picks
+    nflag = df["red_flags"].map(len)
+    serious = df["red_flags"].map(lambda fl: any(k in x for x in fl for k in
+                                                ("one-off", "new shares", "acquisition")))
+    df["red_flag_count"] = nflag
+    df["pick_ok"] = ~serious & (nflag < 2)
+    df["total"] = (df["total_raw"] - 5 * nflag).clip(lower=0).astype(int)
+    df["red_flags"] = df["red_flags"].map(lambda fl: "; ".join(fl))
     df["legends_na"] = df.apply(lambda r: ", ".join(label[c] for c in inv if pd.isna(r[c])), axis=1)
     df["passed"] = df.apply(lambda r: ", ".join(label[c] for c in inv if r[c] >= config.PASS_MARK), axis=1)
+    df["agree"] = df.passes_raw.astype(int).astype(str) + "/" + df.legends_avail.astype(int).astype(str)
     df = df.sort_values(["passes", "total"], ascending=False).reset_index(drop=True)
 
     print("5/5 News + Reddit on holdings and top picks...")

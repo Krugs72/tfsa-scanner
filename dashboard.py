@@ -15,12 +15,13 @@ def _num(x):
 
 
 def _row(r):
-    inv = ["cowan", "buffett", "lynch", "oneil", "greenblatt"]
+    inv = config.LEGENDS
     return {
         "t": r["ticker"], "n": str(r["name"])[:34], "p": _num(r["price"]),
         "score": int(r["total"]), "passes": int(r["passes"]),
         "raw": int(r.get("passes_raw", r["passes"])), "avail": int(r.get("legends_avail", 5)),
-        "checks": {k: (None if _num(r[k]) is None else bool(r[k] >= config.PASS_MARK)) for k in inv},
+        "checks": {k: (None if _num(r.get(k)) is None else bool(r[k] >= config.PASS_MARK)) for k in inv},
+        "flags": r["red_flags"] if isinstance(r.get("red_flags"), str) else "",
         "signal": r["signal"] if isinstance(r["signal"], str) else "",
         "cur": r["currency"],
         "cdr": config.CDR_MAP.get(r["ticker"], ""),
@@ -36,7 +37,8 @@ def _row(r):
 def write_dashboard(df, macro, path):
     held = set(config.HOLDINGS)
     ok = (~df.ticker.isin(held)) & df.is_stock.astype(bool) & \
-         (~df.trend.astype(str).str.contains("Overheated")) & (df.buffett >= 6)
+         (~df.trend.astype(str).str.contains("Overheated")) & (df.buffett >= 6) & \
+         df.get("pick_ok", True).astype(bool)
     consensus = df[ok & (df.passes >= 4) & (df.cowan >= 10)] \
         .sort_values(["passes", "total"], ascending=False) \
         .drop_duplicates("name").head(12)   # e.g. FOX and FOXA are the same company
@@ -89,6 +91,7 @@ h1{font-size:22px;margin:4px 0 2px}h2{font-size:16px;margin:26px 0 10px;display:
 .b.sig{background:#dcfce7;color:#166534}.b.strong{background:#166534;color:#fff}.b.fx{background:#fef3c7;color:#92400e}.b.cyc{background:#ffedd5;color:#9a3412}.b.ca{background:#e0e7ff;color:#3730a3}
 @media (prefers-color-scheme:dark){.b.sig{background:#14532d;color:#bbf7d0}.b.fx{background:#451a03;color:#fde68a}.b.cyc{background:#431407;color:#fed7aa}.b.ca{background:#1e1b4b;color:#c7d2fe}}
 .legends{display:flex;gap:4px;margin:4px 0 8px;flex-wrap:wrap}
+.flag{color:#b45309;font-size:12px;margin:2px 0 6px}
 .lg{font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);color:var(--mute)}
 .lg.y{border-color:var(--good);color:var(--good);font-weight:600}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:4px}
@@ -105,7 +108,7 @@ details summary{cursor:pointer;color:var(--accent)}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
 const D=__DATA__;
-const L={cowan:"Cowan",buffett:"Buffett",lynch:"Lynch",oneil:"O'Neil",greenblatt:"Greenblatt"};
+const L={cowan:"Cowan",buffett:"Buffett",lynch:"Lynch",oneil:"O'Neil",greenblatt:"Greenblatt",piotroski:"Piotroski",graham:"Graham",momentum:"Momentum"};
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.textContent=h;return e};
 const pct=x=>x==null?"–":(x>=0?"+":"")+Math.round(x*100)+"%";
 const money=x=>x==null?"–":"$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -123,10 +126,10 @@ function card(r){const c=el("div","card");const top=el("div","top");
  const s=el("div","score");s.append(el("div","big",r.score),el("div","small",`/100 · ${money(r.p)}`));top.append(l,s);c.append(top);
  const bd=el("div","badges");
  if(r.signal.includes("STRONG"))bd.append(el("span","b strong","🔔 STRONG ENTRY"));else if(r.signal.includes("ENTRY"))bd.append(el("span","b sig","🔔 Entry signal"));
- bd.append(el("span","b",r.avail<5?`${r.raw}/${r.avail} legends agree`:`${r.raw}/5 legends agree`));
+ bd.append(el("span","b",`${r.raw}/${r.avail} legends agree`));
  if(r.cur==="CAD")bd.append(el("span","b ca","🇨🇦 No FX fee"));else if(r.cur==="CDR")bd.append(el("span","b ca",`🇨🇦 Buy as ${r.cdr} (CDR)`));else bd.append(el("span","b fx","💱 1.5% FX fee"));
  if(r.cyc)bd.append(el("span","b cyc","⚠️ Commodity"));c.append(bd);
- const lg=el("div","legends");for(const k in L)lg.append(el("span","lg"+(r.checks[k]?" y":""),(r.checks[k]?"✓ ":"")+L[k]+(r.checks[k]===null?" (no data)":"")));c.append(lg);
+ const lg=el("div","legends");for(const k in L)lg.append(el("span","lg"+(r.checks[k]?" y":""),(r.checks[k]?"✓ ":"")+L[k]+(r.checks[k]===null?" (no data)":"")));c.append(lg);if(r.flags)c.append(el("p","flag","⚠️ "+r.flags));
  const st=el("div","stats");[["Sales",pct(r.rg),r.rg],["Earnings",r.eg>5?"5x+":pct(r.eg),r.eg],["P/E",r.pe?Math.round(r.pe):"–",null],["vs line",r.band==null?"–":(r.band>=0?"+":"")+Math.round(r.band)+"%",r.band]]
  .forEach(([k,v,n])=>{const d=el("div","st");const b=el("b",n==null?"":(n>=0?"pos":"neg"),v);d.append(b,el("span",null,k));st.append(d)});c.append(st);
  const w=why(r);if(w.length){const u=el("ul","why");w.forEach(x=>u.append(el("li",null,x)));c.append(u)}
@@ -152,7 +155,7 @@ const t2=el("table");t2.innerHTML="<tr><th>Holding</th><th>Price</th><th>Trend</
 D.hold.forEach(r=>{const tr=el("tr");const f=r.signal?r.signal.split(" - ")[0]:"OK";const fe=el("td","flag",f);fe.style.color=f.includes("EXIT")?"var(--bad)":f.includes("TRIM")?"var(--warn)":f.includes("ADD")?"var(--good)":"var(--mute)";
  tr.append(el("td",null,r.t),el("td",null,money(r.p)),el("td",null,`${r.trend} (${r.band>=0?"+":""}${Math.round(r.band||0)}%)`),fe);t2.append(tr)});app.append(t2);
 const ft=el("div","foot");const det=el("details");det.append(el("summary",null,"How the scores work"));
-det.append(el("p",null,"Each of 5 legendary investors' rules is worth 20 points (100 total). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line). Buffett = profitable, low debt, fair price. Lynch = growth at a reasonable price. O'Neil = fast-rising earnings near highs. Greenblatt = high returns on capital + cheap. 5/5 is very rare: cheap (Buffett, Greenblatt) and hot (O'Neil) usually pull opposite ways. If Yahoo has no data for a legend's test (common for banks, insurers and holding companies like Berkshire), that legend is marked 'no data' and left out instead of counting as a fail, and the score is scaled to the legends that could judge it."));
+det.append(el("p",null,"8 legends, each worth 20 points (scaled to 100). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line). Buffett = profitable, low debt, fair price. Lynch = growth at a reasonable price (uses next year's expected growth, so one-off jumps don't count). O'Neil = fast-rising earnings near highs. Greenblatt = high returns on capital + cheap. Piotroski = 9 checks that the business is really getting stronger (profits backed by cash, no new shares, less debt). Graham = cheap on earnings and assets with a strong balance sheet. Momentum = biggest 12-month winners (skipping the last month). No data for a legend = left out, not a fail. Red flags (one-off earnings, acquisition-driven sales, new shares, analysts' target below price, a crash, tiny/thinly traded) cost 5 points each; serious ones keep a stock out of the picks. We track how each legend's picks perform and drop the ones that don't help."));
 det.append(el("p",null,"Spread today: "+Object.entries(D.counts).map(([k,v])=>`${k}/5: ${v}`).join(" · ")));
 ft.append(det,el("p",null,"Research tool only, not financial advice. Check the news before acting, and keep speculative bets small."));app.append(ft);
 </script></body></html>"""

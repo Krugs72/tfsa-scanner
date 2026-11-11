@@ -77,3 +77,12 @@ CDR_MAP = {
 # business isn't junk, and the market isn't risk-off.
 ENTRY_MIN_PASSES = 4
 ENTRY_MIN_BUFFETT = 10
+
+
+# ---- Legends (Nov 11, 2026: v2, expanded to 8; drop the ones that don't predict returns) ----
+LEGENDS = ["cowan", "buffett", "lynch", "oneil", "greenblatt", "piotroski", "graham", "momentum"]
+LEGEND_LABELS = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch", "oneil": "O'Neil",
+                 "greenblatt": "Greenblatt", "piotroski": "Piotroski", "graham": "Graham",
+                 "momentum": "Momentum"}
+SCORING_VERSION = "v2"
+PIOTROSKI_TOP_N = 250   # how many top candidates get the full-statement Piotroski check
