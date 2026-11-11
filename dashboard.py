@@ -41,7 +41,9 @@ def write_dashboard(df, macro, path):
          df.get("pick_ok", True).astype(bool)
     consensus = df[ok & (df.passes >= 4) & (df.cowan >= 10)] \
         .sort_values(["passes", "total"], ascending=False) \
-        .drop_duplicates("name").head(12)   # e.g. FOX and FOXA are the same company
+        .drop_duplicates("name")   # e.g. FOX and FOXA are the same company
+    # max 3 per sector so one industry (e.g. insurers) can't take over the list
+    consensus = consensus[consensus.groupby(consensus.sector.fillna("?")).cumcount() < 3].head(12)
     growth = df[ok & (df.cowan >= 10)].copy()
     growth = growth[growth.rev_growth.astype(float).fillna(0) >= 0.10]
     growth = growth[~growth.ticker.isin(consensus.ticker.head(6))] \

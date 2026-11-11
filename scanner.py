@@ -372,8 +372,8 @@ def red_flags(r, f):
     ocf, ni = f.get("operatingCashflow"), f.get("netIncomeToCommon")
     tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
     fwd_g = (tpe / fpe - 1) if tpe and fpe and tpe > 0 and fpe > 0 else None
-    if eg is not None and eg > 1.0 and ((ocf is not None and ni and ocf < ni) or
-                                         (fwd_g is not None and fwd_g < 0.20)):
+    if eg is not None and (eg > 5.0 or (eg > 1.0 and ((ocf is not None and ni and ocf < ni) or
+                                                     (fwd_g is not None and fwd_g < 0.20)))):
         flags.append("one-off earnings jump?")
     rg = r.get("rev_growth")
     if rg is not None and rg > 0.5 and fwd_g is not None and fwd_g < 0.15:
