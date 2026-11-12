@@ -142,44 +142,57 @@ def get_fred(series_id):
     return df.dropna().set_index("date")["value"]
 
 
-def get_bls(series_ids):
-    """Monthly US data (jobs, inflation). Tries the BLS API, then DBnomics (a free mirror
-    of BLS), then FRED. Returns {series_id: pandas Series indexed by month}."""
-    out = {}
+def get_bls(series_ids, debug=False):
+    """Monthly US data (jobs, inflation). Asks the BLS API, DBnomics (a free mirror of BLS)
+    and FRED, and keeps the FRESHEST copy of each series (some sources lag or go stale).
+    Returns {series_id: pandas Series indexed by 'YYYY-MM'}."""
+    found = {sid: [] for sid in series_ids}
     try:
         r = requests.post("https://api.bls.gov/publicAPI/v1/timeseries/data/",
-                          json={"seriesid": series_ids}, headers=UA, timeout=25)
-        j = r.json()
-        for s in j.get("Results", {}).get("series", []):
+                          json={"seriesid": series_ids, "startyear": str(dt.date.today().year - 2),
+                                "endyear": str(dt.date.today().year)}, headers=UA, timeout=25)
+        for s in r.json().get("Results", {}).get("series", []):
             rows = [(f"{d['year']}-{d['period'][1:]}", float(d["value"])) for d in s["data"]
                     if d["period"].startswith("M") and d["period"] != "M13" and d["value"] not in ("-", "")]
             if rows:
-                out[s["seriesID"]] = pd.Series(dict(rows)).sort_index()
-    except Exception:
-        pass
+                found[s["seriesID"]].append(("BLS", pd.Series(dict(rows)).sort_index()))
+    except Exception as e:
+        if debug: print("BLS failed:", e)
     dbn = {"LNS14000000": "BLS/ln/LNS14000000", "CUUR0000SA0": "BLS/cu/CUUR0000SA0",
            "CUUR0000SA0L1E": "BLS/cu/CUUR0000SA0L1E", "CES0000000001": "BLS/ce/CES0000000001"}
     fred = {"LNS14000000": "UNRATE", "CUUR0000SA0": "CPIAUCNS", "CUUR0000SA0L1E": "CPILFENS",
             "CES0000000001": "PAYEMS"}
     for sid in series_ids:
-        if sid in out:
-            continue
         try:
             j = requests.get(f"https://api.db.nomics.world/v22/series/{dbn[sid]}?observations=1",
                              headers=UA, timeout=25).json()
             d = j["series"]["docs"][0]
-            ser = pd.Series(d["value"], index=d["period"])
-            out[sid] = pd.to_numeric(ser, errors="coerce").dropna().sort_index()
-            continue
-        except Exception:
-            pass
+            ser = pd.to_numeric(pd.Series(d["value"], index=d["period"]), errors="coerce").dropna()
+            found[sid].append(("DBnomics", ser.sort_index()))
+        except Exception as e:
+            if debug: print("DBnomics failed:", sid, e)
         try:
             ser = get_fred(fred[sid])
             ser.index = [str(i)[:7] for i in ser.index]
+            found[sid].append(("FRED", ser))
+        except Exception as e:
+            if debug: print("FRED failed:", sid, e)
+    out = {}
+    for sid, opts in found.items():
+        if debug:
+            print(sid, [(src, s.index[-1]) for src, s in opts])
+        if opts:
+            src, ser = max(opts, key=lambda o: o[1].index[-1])
+            ser.attrs["source"] = src
             out[sid] = ser
-        except Exception:
-            pass
     return out
+
+
+def months_old(period):
+    """How many months ago a 'YYYY-MM' period was."""
+    y, m = map(int, str(period)[:7].split("-"))
+    t = dt.date.today()
+    return (t.year - y) * 12 + t.month - m
 
 
 def next_fomc():
@@ -493,7 +506,7 @@ def macro_weather():
         notes.append(f"Rate data unavailable ({e})")
     bls = get_bls(["LNS14000000", "CES0000000001", "CUUR0000SA0", "CUUR0000SA0L1E"])
     ur = bls.get("LNS14000000")
-    if ur is not None and len(ur) >= 12:
+    if ur is not None and len(ur) >= 12 and months_old(ur.index[-1]) <= 3:
         sahm = ur.iloc[-3:].mean() - ur.iloc[-12:].min()
         out["sahm"] = sahm
         jobs = ""
@@ -506,9 +519,9 @@ def macro_weather():
             "RECESSION WARNING (Sahm rule triggered)" if sahm >= 0.5 else
             "jobs weakening" if sahm >= 0.3 else "jobs stable"))
     else:
-        notes.append("Jobs data unavailable this run - see the Sunday report")
+        notes.append("Jobs data unavailable this run" + (f" (newest found was {ur.index[-1]}, too old)" if ur is not None else "") + " - see the Sunday report")
     cpi, core = bls.get("CUUR0000SA0"), bls.get("CUUR0000SA0L1E")
-    if cpi is not None and len(cpi) >= 14:
+    if cpi is not None and len(cpi) >= 14 and months_old(cpi.index[-1]) <= 3:
         yoy = (cpi.iloc[-1] / cpi.iloc[-13] - 1) * 100
         prev = (cpi.iloc[-2] / cpi.iloc[-14] - 1) * 100
         out["cpi"] = yoy
@@ -521,7 +534,7 @@ def macro_weather():
                         "above the Fed's 2% target" if yoy >= 2.5 else "near the Fed's 2% target")
         notes.append(txt)
     else:
-        notes.append("Inflation data unavailable this run - see the Sunday report")
+        notes.append("Inflation data unavailable this run" + (f" (newest found was {cpi.index[-1]}, too old)" if cpi is not None else "") + " - see the Sunday report")
     day, days = next_fomc()
     if day:
         out["fomc_days"] = days
