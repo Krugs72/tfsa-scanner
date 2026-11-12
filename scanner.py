@@ -134,7 +134,7 @@ def get_info(ticker, tries=3):
 
 def get_fred(series_id):
     url = f"https://fred.stlouisfed.org/graph/fredgraph.csv?id={series_id}"
-    r = requests.get(url, headers=UA, timeout=20)   # FRED often blocks cloud runners
+    r = requests.get(url, headers=UA, timeout=8)   # FRED often blocks cloud runners
     r.raise_for_status()
     df = pd.read_csv(io.StringIO(r.text))
     df.columns = ["date", "value"]
@@ -150,7 +150,10 @@ def get_bls(series_ids, debug=False):
     try:
         r = requests.post("https://api.bls.gov/publicAPI/v1/timeseries/data/",
                           json={"seriesid": series_ids, "startyear": str(dt.date.today().year - 2),
-                                "endyear": str(dt.date.today().year)}, headers=UA, timeout=25)
+                                "endyear": str(dt.date.today().year)},
+                          headers={"Content-Type": "application/json",
+                                   "User-Agent": "tfsa-scanner (personal research script)"}, timeout=25)
+        if debug: print("BLS status", r.status_code, r.text[:200].replace("\n", " "))
         for s in r.json().get("Results", {}).get("series", []):
             rows = [(f"{d['year']}-{d['period'][1:]}", float(d["value"])) for d in s["data"]
                     if d["period"].startswith("M") and d["period"] != "M13" and d["value"] not in ("-", "")]
