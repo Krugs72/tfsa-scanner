@@ -14,4 +14,6 @@ jobs:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
-      - run: python -c "import scanner; scanner.get_bls(['LNS14000000','CES0000000001','CUUR0000SA0','CUUR0000SA0L1E'], debug=True); m = scanner.macro_weather(); print(m['regime']); print(chr(10).join(m['notes']))"
+      - env:
+          ALPHAVANTAGE_API_KEY: ${{ secrets.ALPHAVANTAGE_API_KEY }}
+        run: python -c "import scanner; scanner.get_bls(['LNS14000000','CES0000000001','CUUR0000SA0','CUUR0000SA0L1E'], debug=True); m = scanner.macro_weather(); print(m['regime']); print(chr(10).join(m['notes']))"

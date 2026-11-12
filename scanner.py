@@ -147,6 +147,28 @@ def get_bls(series_ids, debug=False):
     and FRED, and keeps the FRESHEST copy of each series (some sources lag or go stale).
     Returns {series_id: pandas Series indexed by 'YYYY-MM'}."""
     found = {sid: [] for sid in series_ids}
+    # 1) Alpha Vantage (free key stored as the GitHub secret ALPHAVANTAGE_API_KEY; 25 calls/day)
+    av_key = os.environ.get("ALPHAVANTAGE_API_KEY", "").strip()
+    av = {"LNS14000000": "UNEMPLOYMENT", "CUUR0000SA0": "CPI", "CES0000000001": "NONFARM_PAYROLL"}
+    if av_key:
+        for sid in series_ids:
+            if sid not in av:
+                continue
+            try:
+                j = requests.get("https://www.alphavantage.co/query",
+                                 params={"function": av[sid], "apikey": av_key, "datatype": "json"},
+                                 headers=UA, timeout=25).json()
+                rows = {d["date"][:7]: float(d["value"]) for d in j.get("data", [])
+                        if d.get("value") not in (".", "", None)}
+                if rows:
+                    found[sid].append(("AlphaVantage", pd.Series(rows).sort_index()))
+                elif debug:
+                    print("AlphaVantage empty:", sid, str(j)[:200])
+            except Exception as e:
+                if debug: print("AlphaVantage failed:", sid, e)
+            time.sleep(1.2)                                   # free tier: 1 call per second
+    elif debug:
+        print("No ALPHAVANTAGE_API_KEY secret set")
     try:
         r = requests.post("https://api.bls.gov/publicAPI/v1/timeseries/data/",
                           json={"seriesid": series_ids, "startyear": str(dt.date.today().year - 2),
@@ -524,13 +546,22 @@ def macro_weather():
     else:
         notes.append("Jobs data unavailable this run" + (f" (newest found was {ur.index[-1]}, too old)" if ur is not None else "") + " - see the Sunday report")
     cpi, core = bls.get("CUUR0000SA0"), bls.get("CUUR0000SA0L1E")
-    if cpi is not None and len(cpi) >= 14 and months_old(cpi.index[-1]) <= 3:
-        yoy = (cpi.iloc[-1] / cpi.iloc[-13] - 1) * 100
-        prev = (cpi.iloc[-2] / cpi.iloc[-14] - 1) * 100
+    def _yoy(ser, i):
+        """Year-over-year % for the i-th from last month, matching by date (data can have gaps)."""
+        p = ser.index[i]
+        y, m = map(int, p.split("-"))
+        ago = f"{y - 1}-{m:02d}"
+        return (ser.iloc[i] / ser[ago] - 1) * 100 if ago in ser.index else None
+    if cpi is not None and len(cpi) >= 14 and months_old(cpi.index[-1]) <= 3 and (
+            _yoy(cpi, -1) is not None or _yoy(cpi, -2) is not None):
+        if _yoy(cpi, -1) is None:          # e.g. a missing month a year ago: report the month before
+            cpi = cpi.iloc[:-1]
+        yoy = _yoy(cpi, -1)
+        prev = _yoy(cpi, -2) if _yoy(cpi, -2) is not None else yoy
         out["cpi"] = yoy
         txt = f"Inflation (CPI) {yoy:.1f}% a year ({cpi.index[-1]}), {'up' if yoy > prev + 0.05 else 'down' if yoy < prev - 0.05 else 'flat'} from {prev:.1f}%"
-        if core is not None and len(core) >= 13:
-            cy = (core.iloc[-1] / core.iloc[-13] - 1) * 100
+        if core is not None and len(core) >= 13 and months_old(core.index[-1]) <= 3 and _yoy(core, -1) is not None:
+            cy = _yoy(core, -1)
             out["core_cpi"] = cy
             txt += f"; core {cy:.1f}%"
         txt += " - " + ("hot (Fed's target is 2%; keeps pressure on rates)" if yoy >= 3.5 else
