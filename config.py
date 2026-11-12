@@ -86,3 +86,12 @@ LEGEND_LABELS = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch", "onei
                  "momentum": "Momentum"}
 SCORING_VERSION = "v2"
 PIOTROSKI_TOP_N = 250   # how many top candidates get the full-statement Piotroski check
+
+
+# Fed (FOMC) rate-decision days (2nd day of each meeting). Source: federalreserve.gov calendar;
+# 2027 dates are the Fed's tentative schedule. Add 2028 when the Fed publishes it (usually ~Aug/Sep).
+FOMC_DATES = [
+    "2026-12-09",
+    "2027-01-27", "2027-03-17", "2027-04-28", "2027-06-09",
+    "2027-07-28", "2027-09-15", "2027-10-27", "2027-12-08",
+]

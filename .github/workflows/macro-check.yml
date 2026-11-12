@@ -1,0 +1,17 @@
+name: Market weather check (quick test)
+
+on:
+  workflow_dispatch:      # run by hand: tests the jobs / inflation / Fed data sources in ~1 min
+
+jobs:
+  macro:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - run: python -c "import scanner; m = scanner.macro_weather(); print(m['regime']); print('\n'.join(m['notes']))"

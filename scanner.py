@@ -142,6 +142,56 @@ def get_fred(series_id):
     return df.dropna().set_index("date")["value"]
 
 
+def get_bls(series_ids):
+    """Monthly US data (jobs, inflation). Tries the BLS API, then DBnomics (a free mirror
+    of BLS), then FRED. Returns {series_id: pandas Series indexed by month}."""
+    out = {}
+    try:
+        r = requests.post("https://api.bls.gov/publicAPI/v1/timeseries/data/",
+                          json={"seriesid": series_ids}, headers=UA, timeout=25)
+        j = r.json()
+        for s in j.get("Results", {}).get("series", []):
+            rows = [(f"{d['year']}-{d['period'][1:]}", float(d["value"])) for d in s["data"]
+                    if d["period"].startswith("M") and d["period"] != "M13" and d["value"] not in ("-", "")]
+            if rows:
+                out[s["seriesID"]] = pd.Series(dict(rows)).sort_index()
+    except Exception:
+        pass
+    dbn = {"LNS14000000": "BLS/ln/LNS14000000", "CUUR0000SA0": "BLS/cu/CUUR0000SA0",
+           "CUUR0000SA0L1E": "BLS/cu/CUUR0000SA0L1E", "CES0000000001": "BLS/ce/CES0000000001"}
+    fred = {"LNS14000000": "UNRATE", "CUUR0000SA0": "CPIAUCNS", "CUUR0000SA0L1E": "CPILFENS",
+            "CES0000000001": "PAYEMS"}
+    for sid in series_ids:
+        if sid in out:
+            continue
+        try:
+            j = requests.get(f"https://api.db.nomics.world/v22/series/{dbn[sid]}?observations=1",
+                             headers=UA, timeout=25).json()
+            d = j["series"]["docs"][0]
+            ser = pd.Series(d["value"], index=d["period"])
+            out[sid] = pd.to_numeric(ser, errors="coerce").dropna().sort_index()
+            continue
+        except Exception:
+            pass
+        try:
+            ser = get_fred(fred[sid])
+            ser.index = [str(i)[:7] for i in ser.index]
+            out[sid] = ser
+        except Exception:
+            pass
+    return out
+
+
+def next_fomc():
+    """Next scheduled Fed (FOMC) decision day from config.FOMC_DATES."""
+    today = dt.date.today()
+    for d in config.FOMC_DATES:
+        day = dt.date.fromisoformat(d)
+        if day >= today:
+            return day, (day - today).days
+    return None, None
+
+
 def get_btc_weekly():
     """Bitcoin weekly closes. Yahoo first (no key), CoinGecko as backup."""
     try:
@@ -441,15 +491,42 @@ def macro_weather():
             "Fed has been hiking" if hiking else "Fed on hold"))
     except Exception as e:
         notes.append(f"Rate data unavailable ({e})")
-    try:
-        ur = get_fred("UNRATE")
+    bls = get_bls(["LNS14000000", "CES0000000001", "CUUR0000SA0", "CUUR0000SA0L1E"])
+    ur = bls.get("LNS14000000")
+    if ur is not None and len(ur) >= 12:
         sahm = ur.iloc[-3:].mean() - ur.iloc[-12:].min()
         out["sahm"] = sahm
-        notes.append(f"Unemployment {ur.iloc[-1]:.1f}% - " + (
+        jobs = ""
+        pay = bls.get("CES0000000001")
+        if pay is not None and len(pay) >= 4:
+            chg = (pay.iloc[-1] - pay.iloc[-2])          # thousands of jobs added last month
+            avg3 = (pay.iloc[-1] - pay.iloc[-4]) / 3
+            jobs = f", {chg:+,.0f}k jobs last month (3-month avg {avg3:+,.0f}k)"
+        notes.append(f"Unemployment {ur.iloc[-1]:.1f}% ({ur.index[-1]}){jobs} - " + (
             "RECESSION WARNING (Sahm rule triggered)" if sahm >= 0.5 else
             "jobs weakening" if sahm >= 0.3 else "jobs stable"))
-    except Exception as e:
-        notes.append("Jobs data unavailable this run (FRED blocked) - see the Sunday report")
+    else:
+        notes.append("Jobs data unavailable this run - see the Sunday report")
+    cpi, core = bls.get("CUUR0000SA0"), bls.get("CUUR0000SA0L1E")
+    if cpi is not None and len(cpi) >= 14:
+        yoy = (cpi.iloc[-1] / cpi.iloc[-13] - 1) * 100
+        prev = (cpi.iloc[-2] / cpi.iloc[-14] - 1) * 100
+        out["cpi"] = yoy
+        txt = f"Inflation (CPI) {yoy:.1f}% a year ({cpi.index[-1]}), {'up' if yoy > prev + 0.05 else 'down' if yoy < prev - 0.05 else 'flat'} from {prev:.1f}%"
+        if core is not None and len(core) >= 13:
+            cy = (core.iloc[-1] / core.iloc[-13] - 1) * 100
+            out["core_cpi"] = cy
+            txt += f"; core {cy:.1f}%"
+        txt += " - " + ("hot (Fed's target is 2%; keeps pressure on rates)" if yoy >= 3.5 else
+                        "above the Fed's 2% target" if yoy >= 2.5 else "near the Fed's 2% target")
+        notes.append(txt)
+    else:
+        notes.append("Inflation data unavailable this run - see the Sunday report")
+    day, days = next_fomc()
+    if day:
+        out["fomc_days"] = days
+        notes.append(f"Next Fed (FOMC) decision: {day:%a %b %-d} ({days} days)" + (
+            " - THIS WEEK: expect bigger moves in stocks, gold and Bitcoin" if days <= 7 else ""))
     try:
         # 10-year minus 3-month yield (the curve the Fed's own recession model uses)
         ten, three = yahoo_weekly("^TNX"), yahoo_weekly("^IRX")
