@@ -12,6 +12,18 @@ def monthly(t):
     return s.dropna()
 
 fx = monthly("CAD=X")
+# Yahoo's USD/CAD starts Oct 2003; fill earlier months from the Fed's H.10 series via DBnomics
+import requests
+for sid in ["FED/H10/RXI_N.M.CA", "FED/G5/RXI_N.M.CA"]:
+    try:
+        j = requests.get(f"https://api.db.nomics.world/v22/series/{sid}?observations=1", timeout=30).json()
+        d = j["series"]["docs"][0]
+        old = pd.Series(pd.to_numeric(d["value"], errors="coerce"), index=pd.PeriodIndex(d["period"], freq="M")).dropna()
+        print("DBnomics", sid, old.index[0], old.index[-1])
+        fx = pd.concat([old[old.index < fx.index[0]], fx]).sort_index()
+        break
+    except Exception as e:
+        print("DBnomics failed", sid, e)
 print("FX first month:", fx.index[0])
 spx, us, intl, ca = monthly("^SP500TR"), monthly("VTSMX"), monthly("VGTSX"), monthly("XIU.TO")
 for n, s in [("SP500TR", spx), ("VTSMX", us), ("VGTSX", intl), ("XIU", ca)]:
