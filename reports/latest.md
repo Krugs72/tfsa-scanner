@@ -1,14 +1,14 @@
-# TFSA Scanner - 2026-11-13
+# TFSA Scanner - 2026-11-16
 
 **Market weather: NEUTRAL / CAUTIOUS**
 
-- Short-term rates 4.13% - Fed has been hiking
+- Short-term rates 4.12% - Fed has been hiking
 - Unemployment 4.1% (2026-10), +165k jobs last month (3-month avg +137k) - jobs stable
 - Inflation (CPI) 3.7% a year (2026-09), up from 3.4% - hot (Fed's target is 2%; keeps pressure on rates)
-- Next Fed (FOMC) decision: Wed Dec 9 (26 days)
-- Yield curve (10y-3m) +0.97 - recently un-inverted (has come before past recessions)
-- Bitcoin $69,291 - JUST LOST band (-6.4% vs 20-week)
-- Crypto mood: Fear & Greed 20/100 (Extreme Fear), down from 28 a week ago
+- Next Fed (FOMC) decision: Wed Dec 9 (23 days)
+- Yield curve (10y-3m) +1.03 - recently un-inverted (has come before past recessions)
+- Bitcoin $64,456 - JUST LOST band (-12.8% vs 20-week)
+- Crypto mood: Fear & Greed 10/100 (Extreme Fear), down from 29 a week ago
 
 Scanned 1720 stocks/ETFs. Each investor's rules are worth 20 points (total out of 100). 'Passes' = how many investors' rules it meets (14+/20).
 
@@ -17,103 +17,103 @@ Scanned 1720 stocks/ETFs. Each investor's rules are worth 20 points (total out o
 
 | Ticker | Score | Passes | Verdict | Trend | Why |
 |---|---|---|---|---|---|
-| **ECPG** Encore Capital Group I | 86 | 5/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Encore Capital Stock Jumps 26% on Stellar Q3 Earnings: Is ECPG a Buy? - Yahoo Fi |
-| **COP** ConocoPhillips | 84 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is ConocoPhillips a Buy After Its Latest Earnings Report? - The Globe and Mail |
-| **OVV** Ovintiv Inc. (DE) | 84 | 4/5 | CORE | JUST RECLAIMED band (+3%) | **STRONG ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: (OVV) Price Dynamics and Execution-Aware Positioning - Stock Traders Daily |
+| **ECPG** Encore Capital Group I | 86 | 5/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Encore Capital Group Insider Sold Shares Worth $1,184,994, According to a Recent |
+| **COP** ConocoPhillips | 84 | 4/5 | CORE | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Analysts Offer Insights on Energy Companies: Energy Transfer (ET) and Conocophil |
+| **OVV** Ovintiv Inc. (DE) | 84 | 4/5 | CORE | JUST RECLAIMED band (+4%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
 | **MTCH** Match Group, Inc. | 81 | 4/5 | EMERGING | JUST RECLAIMED band (+3%) | **STRONG ENTRY SIGNAL** · Cowan, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Match Group Inc. stock outperforms competitors on strong trading day - MarketWat |
+| **EOG** EOG Resources, Inc. | 79 | 4/5 | CORE | Uptrend (+9%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Oil Still Above $85, EOG Up 41% in a Year: Is the Stock Still a Buy? - TradingVi |
 | **RGA** Reinsurance Group of A | 79 | 4/5 | EMERGING | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
-| **URBN** Urban Outfitters, Inc. | 79 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Steven Madden's Wholesale Business Gains Strength From Branded Demand - TradingV |
+| **URBN** Urban Outfitters, Inc. | 79 | 4/5 | CORE | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Urban Outfitters, Inc. Stock 12‑Month Price Target Raised to $94.58, Implies 12% |
 | **FFH.TO** FAIRFAX FINANCIAL HOLD | 78 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · News: Should You Buy Fairfax Financial Holdings (FRFHF) After Golden Cross? - Yahoo Fi |
-| **ALSN** Allison Transmission H | 78 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Momentum · US-only: 1.5% FX fee each way · News: Allison Transmission Keeps Quarterly Dividend at $0.29 per Share, Payable Dec. 4 |
-| **AMG** Affiliated Managers Gr | 78 | 4/5 | CORE | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Affiliated Managers Group stock hits 52-week low at 18.34 USD - Investing.com Ca |
-| **EG** Everest Group, Ltd. | 77 | 4/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Did You Lose Money Investing in Everest Group, Ltd.? Robbins LLP Urges Investors |
-| **CF** CF Industries Holdings | 76 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is CF Industries (CF) Stock Undervalued Right Now? - Yahoo Finance |
-| **EOG** EOG Resources, Inc. | 76 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: EOG Resources Inc. stock underperforms Wednesday when compared to competitors de |
-| **FOXA** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
-| **FOX** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
-| **SEZL** Sezzle Inc. | 76 | 4/5 | CORE | Uptrend (+13%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Sezzle Inc. (NASDAQ:SEZL) Shows High Growth and Improving Fundamentals - ChartMi |
-| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife Inc. stock outperforms competitors despite losses on the day - MarketWat |
-| **TXN** Texas Instruments Inco | 74 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Texas Instruments Incorporated (TXN) Is a Trending Stock: Facts to Know Before B |
-| **CHRD** Chord Energy Corporati | 74 | 4/5 | CORE | Uptrend (+5%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Should Value Investors Buy Chord Energy Corporation (CHRD) Stock? - Yahoo Financ |
-| **ASO** Academy Sports and Out | 74 | 4/5 | CORE | Uptrend (+30%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Cantor Fitzgerald Begins Coverage on Academy Sports and Outdoors (NASDAQ:ASO) -  |
-| **THG** Hanover Insurance Grou | 73 | 4/5 | CORE | Uptrend (+9%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
+| **ALSN** Allison Transmission H | 78 | 4/5 | CORE | JUST RECLAIMED band (+7%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Momentum · US-only: 1.5% FX fee each way · News: Allison Transmission (ALSN) Just Reclaimed the 50-Day Moving Average - Yahoo Fin |
+| **AMG** Affiliated Managers Gr | 78 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Affiliated Managers Group stock hits 52-week low at 18.34 USD - Investing.com Ca |
+| **EG** Everest Group, Ltd. | 77 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: SueWallSt Reminds Everest Group, Ltd. Investors of Upcoming Securities Class Act |
+| **CF** CF Industries Holdings | 76 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is CF Industries (CF) Stock Undervalued Right Now? - Yahoo Finance |
+| **FOXA** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Do Wall Street Analysts Like Fox Corporation Stock? - Yahoo Finance |
+| **FOX** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Do Wall Street Analysts Like Fox Corporation Stock? - Yahoo Finance |
+| **SEZL** Sezzle Inc. | 76 | 4/5 | CORE | Uptrend (+13%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Form 4 Sezzle Inc: Charles Youakim (Director, 10% Owner, Executive Chairman and  |
+| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife - Forbes |
+| **TXN** Texas Instruments Inco | 74 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Texas Instruments Incorporated (TXN) Is a Trending Stock: Facts to Know Before B |
+| **CHRD** Chord Energy Corporati | 74 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Should Value Investors Buy Chord Energy Corporation (CHRD) Stock? - Yahoo Financ |
+| **ASO** Academy Sports and Out | 74 | 4/5 | CORE | Uptrend (+31%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
+| **VSNT** Versant Media Group, I | 74 | 4/5 | CORE | JUST RECLAIMED band (+2%) | **STRONG ENTRY SIGNAL** 🆕 · Cowan, Buffett, Lynch, Greenblatt, Graham · US-only: 1.5% FX fee each way |
 
 ## Your holdings
 | Ticker | Score | Passes | Verdict | Trend | Why |
 |---|---|---|---|---|---|
-| **CCO.TO** CAMECO CORP | 32 | 1/5 | WATCH | Downtrend (-18%) | Piotroski · News: Cameco Corp. stock rises Friday, outperforms market - MarketWatch |
+| **CCO.TO** CAMECO CORP | 32 | 1/5 | WATCH | Downtrend (-19%) | Piotroski · News: Cameco Corp. stock falls Friday, underperforms market - MarketWatch |
+| **XDIV.TO** ISHARES CORE MSCI CAD  | 21 | 1/5 | CORE | Uptrend (+2%) | Cowan, Buffett |
 | **VEQT.TO** VANGUARD ALL EQUITY ET | 17 | 1/5 | CORE | Testing band (+0%) | Buffett |
-| **XDIV.TO** ISHARES CORE MSCI CAD  | 17 | 1/5 | CORE | Testing band (+2%) | Buffett |
-| **MSTR** Strategy Inc | 15 | 1/5 | AVOID FOR NOW | JUST LOST band (-7%) | **EXIT WATCH - just fell below trend band** 🆕 · Lynch · US-only: 1.5% FX fee each way · News: Strategy shares fall after MSCI confirms deletion from US large-cap benchmark -  |
+| **MSTR** Strategy Inc | 15 | 1/5 | AVOID FOR NOW | JUST LOST band (-10%) | **EXIT WATCH - just fell below trend band** · Lynch · US-only: 1.5% FX fee each way · News: Why is Strategy stock falling after hours today? By Investing.com - Investing.co |
 | **CGL-C.TO** ISHARES GOLD BULLION E | 10 | 1/5 | WAIT FOR ENTRY | Downtrend (-6%) | Buffett |
-| **IMSR** Terrestrial Energy Inc | 1 | 1/5 | AVOID FOR NOW | Downtrend (-44%) | **EXIT WATCH - weak business in a downtrend** · Piotroski · US-only: 1.5% FX fee each way · News: Wedbush reiterates Terrestrial Energy stock rating at Neutral By Investing.com - |
-| **INFQ** Infleqtion, Inc. | 13 | 0/5 | AVOID FOR NOW | Downtrend (-22%) | **EXIT WATCH - weak business in a downtrend** · - · US-only: 1.5% FX fee each way · News: Infleqtion stock may move 7.7% on Nov. 16 earnings release - Investing.com |
+| **IMSR** Terrestrial Energy Inc | 6 | 1/5 | AVOID FOR NOW | Downtrend (-41%) | **EXIT WATCH - weak business in a downtrend** · Piotroski · US-only: 1.5% FX fee each way · News: Terrestrial Energy Inc. (IMSR) latest stock news and headlines – Yahoo Finance - |
+| **INFQ** Infleqtion, Inc. | 13 | 0/5 | AVOID FOR NOW | Downtrend (-24%) | **EXIT WATCH - weak business in a downtrend** · - · US-only: 1.5% FX fee each way · News: Infleqtion Inc. (INFQ) Profile, Company FAQs & Facts, Industry, Sector, Employee |
 
 ## 🇨🇦 Top Canadian picks (no FX fee: TSX-listed or CDR available)
 | Ticker | Score | Passes | Verdict | Trend | Why |
 |---|---|---|---|---|---|
 | **FFH.TO** FAIRFAX FINANCIAL HOLD | 78 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · News: Should You Buy Fairfax Financial Holdings (FRFHF) After Golden Cross? - Yahoo Fi |
-| **ERO.TO** ERO COPPER CORP | 73 | 4/5 | WAIT FOR ENTRY | Downtrend (-6%) | Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum |
-| **PEY.TO** PEYTO EXPLORATION AND  | 72 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham |
+| **PEY.TO** PEYTO EXPLORATION AND  | 72 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham |
 | **MFC.TO** MANULIFE FIN | 71 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Piotroski, Graham, Momentum |
-| **SU.TO** SUNCOR ENERGY INC. | 71 | 4/5 | CORE | Uptrend (+4%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum |
-| **CNQ.TO** CDN NATURAL RES | 68 | 4/5 | CORE | Uptrend (+3%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum |
-| **TECK-B.TO** TECK RESOURCES LIMITED | 66 | 4/5 | CORE | Testing band (-2%) | Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum |
-| **TCL-A.TO** TRANSCONTINENTAL INC., | 62 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum |
-| **QBR-B.TO** QUEBECOR INC CLASS B S | 61 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Momentum |
+| **SU.TO** SUNCOR ENERGY INC. | 71 | 4/5 | CORE | Uptrend (+5%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum |
+| **CNQ.TO** CDN NATURAL RES | 68 | 4/5 | CORE | Uptrend (+4%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum |
+| **QBR-B.TO** QUEBECOR INC CLASS B S | 68 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum |
+| **TCL-A.TO** TRANSCONTINENTAL INC., | 62 | 4/5 | CORE | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum |
+| **TECK-B.TO** TECK RESOURCES LIMITED | 56 | 4/5 | WAIT FOR ENTRY | Downtrend (-4%) | Buffett, O'Neil, Greenblatt, Graham, Momentum |
+| **CVE.TO** CENOVUS ENERGY INC. | 73 | 3/5 | CORE | Testing band (-3%) | Buffett, O'Neil, Greenblatt, Graham, Momentum |
 | **JWEL.TO** JAMIESON WELLNESS INC | 72 | 3/5 | EMERGING | Uptrend (+3%) | Cowan, Lynch, O'Neil, Piotroski, Momentum |
-| **IGM.TO** IGM FINANCIAL INC. | 71 | 3/5 | EMERGING | JUST RECLAIMED band (+4%) | Cowan, O'Neil, Piotroski, Graham, Momentum |
-| **NWC.TO** THE NORTH WEST COMPANY | 71 | 3/5 | CORE | Uptrend (+11%) | Cowan, Buffett, Lynch, Greenblatt |
-| **CG.TO** CENTERRA GOLD INC. | 70 | 3/5 | CORE | Testing band (+0%) | Buffett, Greenblatt, Graham, Momentum |
-| **ATZ.TO** ARITZIA INC | 68 | 3/5 | CORE | Uptrend (+11%) | Cowan, Buffett, O'Neil, Piotroski, Momentum |
-| **BTO.TO** B2GOLD CORP. | 68 | 3/5 | CORE | Testing band (+3%) | Buffett, Greenblatt, Graham, Momentum |
+| **CEU.TO** CES ENERGY SOLUTIONS C | 71 | 3/5 | CORE | Uptrend (+16%) | Cowan, Buffett, O'Neil, Momentum |
+| **IGM.TO** IGM FINANCIAL INC. | 71 | 3/5 | EMERGING | JUST RECLAIMED band (+5%) | Cowan, O'Neil, Piotroski, Graham, Momentum |
+| **CG.TO** CENTERRA GOLD INC. | 70 | 3/5 | CORE | Testing band (-0%) | Buffett, Greenblatt, Graham, Momentum |
+| **ERO.TO** ERO COPPER CORP | 70 | 3/5 | WAIT FOR ENTRY | Downtrend (-8%) | Buffett, Greenblatt, Piotroski, Graham, Momentum |
+| **GIB-A.TO** CGI INC | 68 | 3/5 | CORE | Uptrend (+14%) | Cowan, Buffett, Greenblatt, Piotroski |
 
 ## Emerging setups (trend just turned or fast growth + uptrend)
 | Ticker | Score | Passes | Verdict | Trend | Why |
 |---|---|---|---|---|---|
 | **MTCH** Match Group, Inc. | 81 | 4/5 | EMERGING | JUST RECLAIMED band (+3%) | **STRONG ENTRY SIGNAL** · Cowan, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Match Group Inc. stock outperforms competitors on strong trading day - MarketWat |
 | **RGA** Reinsurance Group of A | 79 | 4/5 | EMERGING | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
-| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife Inc. stock outperforms competitors despite losses on the day - MarketWat |
+| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife - Forbes |
 | **CNO** CNO Financial Group, I | 68 | 4/5 | EMERGING | Uptrend (+5%) | Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
-| **MPC** Marathon Petroleum Cor | 77 | 3/5 | EMERGING | Uptrend (+10%) | Cowan, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
-| **AMD** Advanced Micro Devices | 74 | 3/5 | EMERGING | JUST RECLAIMED band (+11%) | Cowan, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way |
-| **PHIN** PHINIA Inc. | 74 | 3/5 | EMERGING | JUST RECLAIMED band (+6%) | Cowan, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way |
+| **PHIN** PHINIA Inc. | 74 | 3/5 | EMERGING | JUST RECLAIMED band (+7%) | Cowan, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way |
+| **MPC** Marathon Petroleum Cor | 72 | 3/5 | EMERGING | Uptrend (+10%) | Cowan, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
 | **JWEL.TO** JAMIESON WELLNESS INC | 72 | 3/5 | EMERGING | Uptrend (+3%) | Cowan, Lynch, O'Neil, Piotroski, Momentum |
-| **UPBD** Upbound Group, Inc. | 72 | 3/5 | EMERGING | JUST RECLAIMED band (+26%) | Cowan, Lynch, O'Neil, Greenblatt, Graham · US-only: 1.5% FX fee each way |
-| **IGM.TO** IGM FINANCIAL INC. | 71 | 3/5 | EMERGING | JUST RECLAIMED band (+4%) | Cowan, O'Neil, Piotroski, Graham, Momentum |
+| **UPBD** Upbound Group, Inc. | 72 | 3/5 | EMERGING | JUST RECLAIMED band (+32%) | Cowan, Lynch, O'Neil, Greenblatt, Graham · US-only: 1.5% FX fee each way |
+| **AMD** Advanced Micro Devices | 71 | 3/5 | EMERGING | JUST RECLAIMED band (+2%) | Cowan, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way |
+| **IGM.TO** IGM FINANCIAL INC. | 71 | 3/5 | EMERGING | JUST RECLAIMED band (+5%) | Cowan, O'Neil, Piotroski, Graham, Momentum |
 
 ## Top 30 new ideas
 | Ticker | Score | Passes | Verdict | Trend | Why |
 |---|---|---|---|---|---|
-| **ECPG** Encore Capital Group I | 86 | 5/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Encore Capital Stock Jumps 26% on Stellar Q3 Earnings: Is ECPG a Buy? - Yahoo Fi |
-| **COP** ConocoPhillips | 84 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is ConocoPhillips a Buy After Its Latest Earnings Report? - The Globe and Mail |
-| **OVV** Ovintiv Inc. (DE) | 84 | 4/5 | CORE | JUST RECLAIMED band (+3%) | **STRONG ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: (OVV) Price Dynamics and Execution-Aware Positioning - Stock Traders Daily |
+| **ECPG** Encore Capital Group I | 86 | 5/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Encore Capital Group Insider Sold Shares Worth $1,184,994, According to a Recent |
+| **COP** ConocoPhillips | 84 | 4/5 | CORE | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Analysts Offer Insights on Energy Companies: Energy Transfer (ET) and Conocophil |
+| **OVV** Ovintiv Inc. (DE) | 84 | 4/5 | CORE | JUST RECLAIMED band (+4%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
 | **MTCH** Match Group, Inc. | 81 | 4/5 | EMERGING | JUST RECLAIMED band (+3%) | **STRONG ENTRY SIGNAL** · Cowan, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Match Group Inc. stock outperforms competitors on strong trading day - MarketWat |
+| **EOG** EOG Resources, Inc. | 79 | 4/5 | CORE | Uptrend (+9%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Oil Still Above $85, EOG Up 41% in a Year: Is the Stock Still a Buy? - TradingVi |
+| **VLO** Valero Energy Corporat | 79 | 4/5 | CORE | JUST RECLAIMED band (+6%) | Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: 3 Reasons Why Growth Investors Shouldn't Overlook Valero Energy (VLO) - Yahoo Fi |
 | **RGA** Reinsurance Group of A | 79 | 4/5 | EMERGING | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
-| **HCI** HCI Group, Inc. | 79 | 4/5 | CORE | Uptrend (+2%) | Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: What HCI Group (HCI) Said on Its Q3 Earnings Call - Yahoo Finance |
-| **URBN** Urban Outfitters, Inc. | 79 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Steven Madden's Wholesale Business Gains Strength From Branded Demand - TradingV |
-| **VIRT** Virtu Financial, Inc. | 79 | 4/5 | CORE | Testing band (+1%) | Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: What Virtu Financial (VIRT) Said on Its Q3 Earnings Call - Yahoo Finance |
+| **HCI** HCI Group, Inc. | 79 | 4/5 | CORE | Uptrend (+3%) | Cowan, Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: HCI Group: High-Quality Name Heading For A Premium Valuation (NYSE:HCI) - Seekin |
+| **URBN** Urban Outfitters, Inc. | 79 | 4/5 | CORE | Uptrend (+10%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Urban Outfitters, Inc. Stock 12‑Month Price Target Raised to $94.58, Implies 12% |
+| **VIRT** Virtu Financial, Inc. | 79 | 4/5 | CORE | Testing band (+0%) | Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Fulcrum Asset Management LLP Acquires 215,850 Shares of Virtu Financial, Inc. $V |
 | **FFH.TO** FAIRFAX FINANCIAL HOLD | 78 | 4/5 | CORE | Uptrend (+17%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · News: Should You Buy Fairfax Financial Holdings (FRFHF) After Golden Cross? - Yahoo Fi |
-| **ALSN** Allison Transmission H | 78 | 4/5 | CORE | JUST RECLAIMED band (+6%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Momentum · US-only: 1.5% FX fee each way · News: Allison Transmission Keeps Quarterly Dividend at $0.29 per Share, Payable Dec. 4 |
-| **AMG** Affiliated Managers Gr | 78 | 4/5 | CORE | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Affiliated Managers Group stock hits 52-week low at 18.34 USD - Investing.com Ca |
-| **EG** Everest Group, Ltd. | 77 | 4/5 | CORE | Uptrend (+11%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Did You Lose Money Investing in Everest Group, Ltd.? Robbins LLP Urges Investors |
-| **CF** CF Industries Holdings | 76 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is CF Industries (CF) Stock Undervalued Right Now? - Yahoo Finance |
-| **EOG** EOG Resources, Inc. | 76 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: EOG Resources Inc. stock underperforms Wednesday when compared to competitors de |
-| **FOXA** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
-| **FOX** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+4%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Fox Corporation upgraded by Seaport Research Partners with a new price target -  |
-| **SEZL** Sezzle Inc. | 76 | 4/5 | CORE | Uptrend (+13%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Sezzle Inc. (NASDAQ:SEZL) Shows High Growth and Improving Fundamentals - ChartMi |
-| **SFBS** ServisFirst Bancshares | 76 | 4/5 | CORE | Testing band (-2%) | Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: ServisFirst Bancshares, Inc. (NYSE:SFBS) Stock Has Average Price Target of $46.5 |
-| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+6%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife Inc. stock outperforms competitors despite losses on the day - MarketWat |
-| **APA** APA Corporation | 74 | 4/5 | CORE | Uptrend (+13%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: APA Corporation: Firing On All Cylinders As It Approaches FCF Inflection In Suri |
-| **TXN** Texas Instruments Inco | 74 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Texas Instruments Incorporated (TXN) Is a Trending Stock: Facts to Know Before B |
-| **CHRD** Chord Energy Corporati | 74 | 4/5 | CORE | Uptrend (+5%) | **ENTRY SIGNAL** 🆕 · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Should Value Investors Buy Chord Energy Corporation (CHRD) Stock? - Yahoo Financ |
-| **CRBG** Corebridge Financial I | 74 | 4/5 | CORE | Uptrend (+8%) | Cowan, Buffett, Lynch, O'Neil, Greenblatt, Graham · US-only: 1.5% FX fee each way · News: Corebridge Financial: 3 Key Takeaways for Long-Term Investors - Yahoo Finance |
-| **ASO** Academy Sports and Out | 74 | 4/5 | CORE | Uptrend (+30%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Cantor Fitzgerald Begins Coverage on Academy Sports and Outdoors (NASDAQ:ASO) -  |
-| **CTSH** Cognizant Technology S | 73 | 4/5 | CORE | Uptrend (+10%) | Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Cognizant (CTSH) Stock Could Be 42% Undervalued On Fresh AI Services Expansion - |
-| **MU** Micron Technology, Inc | 73 | 4/5 | WAIT FOR ENTRY | Downtrend (-14%) | Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
-| **PSX** Phillips 66 | 73 | 4/5 | CORE | Uptrend (+8%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
-| **ERO.TO** ERO COPPER CORP | 73 | 4/5 | WAIT FOR ENTRY | Downtrend (-6%) | Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum |
+| **ALSN** Allison Transmission H | 78 | 4/5 | CORE | JUST RECLAIMED band (+7%) | **STRONG ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Greenblatt, Momentum · US-only: 1.5% FX fee each way · News: Allison Transmission (ALSN) Just Reclaimed the 50-Day Moving Average - Yahoo Fin |
+| **AMG** Affiliated Managers Gr | 78 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Affiliated Managers Group stock hits 52-week low at 18.34 USD - Investing.com Ca |
+| **EG** Everest Group, Ltd. | 77 | 4/5 | CORE | Uptrend (+12%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: SueWallSt Reminds Everest Group, Ltd. Investors of Upcoming Securities Class Act |
+| **CF** CF Industries Holdings | 76 | 4/5 | CORE | Uptrend (+3%) | **ENTRY SIGNAL** · Cowan, Buffett, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Is CF Industries (CF) Stock Undervalued Right Now? - Yahoo Finance |
+| **FOXA** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Do Wall Street Analysts Like Fox Corporation Stock? - Yahoo Finance |
+| **FOX** Fox Corporation | 76 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Do Wall Street Analysts Like Fox Corporation Stock? - Yahoo Finance |
+| **SEZL** Sezzle Inc. | 76 | 4/5 | CORE | Uptrend (+13%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Form 4 Sezzle Inc: Charles Youakim (Director, 10% Owner, Executive Chairman and  |
+| **SFBS** ServisFirst Bancshares | 76 | 4/5 | CORE | Testing band (-3%) | Buffett, Lynch, O'Neil, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: How Servisfirst Bancshares Inc. (SFBS) Affects Rotational Strategy Timing - Stoc |
+| **CTSH** Cognizant Technology S | 75 | 4/5 | CORE | Uptrend (+9%) | Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham · US-only: 1.5% FX fee each way · News: Why is Cognizant Technology Solutions stock slipping today? By Investing.com - I |
+| **MET** MetLife, Inc. | 75 | 4/5 | EMERGING | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Lynch, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: MetLife - Forbes |
+| **APA** APA Corporation | 74 | 4/5 | CORE | Uptrend (+14%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way · News: Can APA's High-Quality Portfolio Fuel Cash Flow and Future Growth? - The Globe a |
+| **TXN** Texas Instruments Inco | 74 | 4/5 | CORE | Uptrend (+8%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum · US-only: 1.5% FX fee each way · News: Texas Instruments Incorporated (TXN) Is a Trending Stock: Facts to Know Before B |
+| **CHRD** Chord Energy Corporati | 74 | 4/5 | CORE | Uptrend (+7%) | **ENTRY SIGNAL** · Cowan, Buffett, O'Neil, Greenblatt, Graham, Momentum · US-only: 1.5% FX fee each way · News: Should Value Investors Buy Chord Energy Corporation (CHRD) Stock? - Yahoo Financ |
+| **CRBG** Corebridge Financial I | 74 | 4/5 | CORE | Uptrend (+9%) | Cowan, Buffett, Lynch, O'Neil, Greenblatt, Graham · US-only: 1.5% FX fee each way · News: Analysts’ Top Financial Picks: Corebridge Financial, Inc. (CRBG), Charles Schwab |
+| **ASO** Academy Sports and Out | 74 | 4/5 | CORE | Uptrend (+31%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
+| **VSNT** Versant Media Group, I | 74 | 4/5 | CORE | JUST RECLAIMED band (+2%) | **STRONG ENTRY SIGNAL** 🆕 · Cowan, Buffett, Lynch, Greenblatt, Graham · US-only: 1.5% FX fee each way |
+| **MU** Micron Technology, Inc | 73 | 4/5 | WAIT FOR ENTRY | Downtrend (-16%) | Buffett, Lynch, Greenblatt, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
+| **PSX** Phillips 66 | 73 | 4/5 | CORE | Uptrend (+9%) | Cowan, Buffett, O'Neil, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
 | **THG** Hanover Insurance Grou | 73 | 4/5 | CORE | Uptrend (+9%) | **ENTRY SIGNAL** · Cowan, Buffett, Lynch, Greenblatt, Piotroski, Momentum · US-only: 1.5% FX fee each way |
-| **JXN** Jackson Financial Inc. | 73 | 4/5 | CORE | Uptrend (+7%) | Cowan, Buffett, Lynch, O'Neil, Piotroski, Graham, Momentum · US-only: 1.5% FX fee each way |
 
 _Research tool only, not financial advice. Sentiment is a rough word count of headlines and Reddit titles: read the news yourself before acting._
