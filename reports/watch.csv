@@ -1,0 +1,8 @@
+name,ticker,price,chg_1d,chg_1w,chg_4w,band_low,band_high,vs_band,reclaim_price,to_reclaim,lose_price,status,weeks_same_side,low_52w,high_52w,from_low,from_high,big_move
+Bitcoin,BTC-USD,63607.08,1.0,-0.8,-17.6,73758.11,74478.21,-13.8,75967.78,19.4,72282.95,below band,4,58558.86,86602.91,8.6,-26.6,False
+Gold (CGL.C/ZGLD),CGL-C.TO,44.44,-3.0,-6.1,-8.2,48.75,48.92,-8.8,49.9,12.3,47.78,below band,13,44.44,61.01,0.0,-27.2,True
+"Gold (spot, GLD)",GLD,341.19,-3.2,-6.6,-10.0,381.28,382.97,-10.5,390.63,14.5,373.66,below band,13,341.19,495.9,0.0,-31.2,True
+Silver (PSLV),PSLV.TO,20.69,-4.7,-13.3,-21.1,26.76,27.03,-22.7,27.57,33.3,26.22,below band,13,20.69,49.35,0.0,-58.1,True
+"Silver (spot, SLV)",SLV,40.7,-4.5,-12.8,-22.1,53.09,53.52,-23.3,54.59,34.1,52.03,below band,31,40.7,105.6,0.0,-61.5,True
+Wheaton (WPM),WPM.TO,172.21,-5.3,-10.8,-7.2,185.0,186.02,-6.9,189.75,10.2,181.3,below band,2,139.3,226.18,23.6,-23.9,True
+MSTR,MSTR,90.32,-6.4,-26.2,-41.2,122.95,129.12,-26.5,131.71,45.8,120.49,below band,4,82.31,206.8,9.7,-56.3,False
