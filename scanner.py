@@ -272,9 +272,9 @@ def week_in_progress(closes, crypto=False):
 
 def cowan(closes, crypto=False):
     """Trend vs the bull market support band. 0-20 points.
-    Nov 19, 2026: a move UP through the band only counts once a WEEKLY close confirms it
-    (mid-week pops that fail by Friday averaged -13.7% in the Nov 10-19 test). Moves DOWN
-    still warn right away."""
+    Nov 19, 2026: a move UP through the band mid-week is labelled "RECLAIMED mid-week": it still
+    alerts and can give an ENTRY SIGNAL, but only a weekly close earns STRONG (mid-week pops that
+    failed by Friday averaged -13.7% in the Nov 10-19 test). Moves DOWN warn right away."""
     if len(closes) < config.BAND_SLOW + 2:
         return {"trend": "Not enough history", "cowan": 0}
     price = float(closes.iloc[-1])
@@ -302,7 +302,7 @@ def cowan(closes, crypto=False):
         trend, pts = "Downtrend", 0
     if (trend in ("JUST RECLAIMED band", "Uptrend") and len(closes) > config.BAND_SLOW + 3
             and week_in_progress(closes, crypto) and not bool(above.iloc[-2])):
-        trend, pts = "RECLAIMING (weekly close pending)", 14
+        trend, pts = "RECLAIMED mid-week (Friday close pending)", 17
     lm = closes.rolling(config.LONG_MA_WEEKS).mean().iloc[-1]
     w26 = closes.iloc[-27] if len(closes) > 27 else closes.iloc[0]
     return {"price": round(price, 2), "pct_vs_band": round(ext * 100, 1),
@@ -611,7 +611,7 @@ def macro_weather():
     try:
         # US dollar index: a rising dollar (plus Fed hikes) squeezes gold, miners, oil and the TSX
         dx = cowan(yahoo_weekly("DX-Y.NYB"))
-        up = dx["trend"] in ("Uptrend", "JUST RECLAIMED band")
+        up = dx["trend"] == "Uptrend" or "RECLAIMED" in dx["trend"]
         out["dollar_up"] = up
         notes.append(f"US dollar index {dx['price']:.1f} - {dx['trend']} ({dx['pct_vs_band']:+.1f}% vs 20-week)" + (
             " - strong dollar: headwind for gold, miners, oil and Canadian stocks" if up else
@@ -736,7 +736,7 @@ def commodity_trends():
         try:
             c = cowan(yahoo_weekly(sym))
             out[sym] = {"name": name, "trend": c["trend"],
-                        "up": c["trend"] in ("Uptrend", "JUST RECLAIMED band")}
+                        "up": c["trend"] == "Uptrend" or "RECLAIMED" in c["trend"]}
             print(f"    {name} ({sym}): {c['trend']}")
         except Exception as e:
             print(f"    {name} ({sym}) unavailable: {e}")   # missing data = no gate, not a block
@@ -767,9 +767,10 @@ def signal(r, regime, held):
             return "ADD WATCH - trend just turned back up"
         return ""
     if (up and r["passes"] >= config.ENTRY_MIN_PASSES and r.get("pick_ok", True)
-            and r["buffett"] >= config.ENTRY_MIN_BUFFETT and regime != "RISK-OFF"):
-        strong = "RECLAIMED" in trend and r["passes"] >= 4
-        return "STRONG ENTRY SIGNAL" if strong else "ENTRY SIGNAL"
+            and r["buffett"] >= config.ENTRY_MIN_BUFFETT):
+        strong = trend == "JUST RECLAIMED band" and r["passes"] >= 4
+        sig = "STRONG ENTRY SIGNAL" if strong else "ENTRY SIGNAL"
+        return sig + (" (market risk-off)" if regime == "RISK-OFF" else "")
     return ""
 
 
@@ -805,12 +806,12 @@ def growth_bullets(r):
         stats.append(f"P/E {pe:.0f}")
     if stats:
         b.append(" · ".join(stats))
-    if "RECLAIMED" in str(r["trend"]):
+    if "mid-week" in str(r["trend"]):
+        b.append("Popped above its trend line this week; Friday close confirms it")
+    elif "RECLAIMED" in str(r["trend"]):
         b.append("Just broke back above its trend line")
     elif r["trend"] == "Uptrend":
         b.append(f"Uptrend, {r['ret_26w']:+.0f}% in 6 months")
-    elif "RECLAIMING" in str(r["trend"]):
-        b.append("Popping above its trend line; needs a Friday close to confirm")
     if r["passed"]:
         b.append(f"Passes {r['passed']}")
     if r.get("sector") in ("Basic Materials", "Energy"):
