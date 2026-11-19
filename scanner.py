@@ -112,7 +112,7 @@ INFO_KEYS = ["shortName", "quoteType", "sector", "trailingPE", "forwardPE",
              "returnOnEquity", "returnOnAssets", "debtToEquity", "profitMargins",
              "freeCashflow", "marketCap", "earningsGrowth", "earningsQuarterlyGrowth",
              "revenueGrowth", "trailingPegRatio", "pegRatio", "enterpriseToEbitda",
-             "fiftyTwoWeekHigh", "dividendYield", "currency",
+             "fiftyTwoWeekHigh", "dividendYield", "currency", "industry",
              "targetMeanPrice", "numberOfAnalystOpinions",
              "priceToBook", "currentRatio", "operatingCashflow", "netIncomeToCommon",
              "averageVolume", "regularMarketPrice"]
@@ -253,8 +253,28 @@ def get_btc_weekly():
 
 
 # ================================================================ scoring ===
-def cowan(closes):
-    """Trend vs the bull market support band. 0-20 points."""
+def week_in_progress(closes, crypto=False):
+    """True if the last weekly bar is this week's unfinished one (Yahoo labels weeks by Monday).
+    Stocks: the week closes Friday ~4pm New York (21:00 UTC). Bitcoin: Sunday midnight UTC."""
+    last = pd.Timestamp(closes.index[-1])
+    if last.tzinfo is not None:
+        last = last.tz_convert(None)
+    last = last.normalize()
+    now = pd.Timestamp.now(tz="UTC").tz_localize(None)
+    if crypto:
+        end = last + pd.Timedelta(days=7)
+    elif last.weekday() == 0:
+        end = last + pd.Timedelta(days=4, hours=21)
+    else:                                   # already labelled by its last day (e.g. Friday)
+        end = last + pd.Timedelta(hours=21)
+    return now < end
+
+
+def cowan(closes, crypto=False):
+    """Trend vs the bull market support band. 0-20 points.
+    Nov 19, 2026: a move UP through the band only counts once a WEEKLY close confirms it
+    (mid-week pops that fail by Friday averaged -13.7% in the Nov 10-19 test). Moves DOWN
+    still warn right away."""
     if len(closes) < config.BAND_SLOW + 2:
         return {"trend": "Not enough history", "cowan": 0}
     price = float(closes.iloc[-1])
@@ -280,6 +300,9 @@ def cowan(closes):
         trend, pts = "Testing band", 10
     else:
         trend, pts = "Downtrend", 0
+    if (trend in ("JUST RECLAIMED band", "Uptrend") and len(closes) > config.BAND_SLOW + 3
+            and week_in_progress(closes, crypto) and not bool(above.iloc[-2])):
+        trend, pts = "RECLAIMING (weekly close pending)", 14
     lm = closes.rolling(config.LONG_MA_WEEKS).mean().iloc[-1]
     w26 = closes.iloc[-27] if len(closes) > 27 else closes.iloc[0]
     return {"price": round(price, 2), "pct_vs_band": round(ext * 100, 1),
@@ -524,6 +547,7 @@ def macro_weather():
         tb = yahoo_weekly("^IRX")
         cutting = tb.iloc[-1] < tb.iloc[-27] - 0.2
         hiking = tb.iloc[-1] > tb.iloc[-27] + 0.2
+        out["hiking"] = bool(hiking)
         notes.append(f"Short-term rates {tb.iloc[-1]:.2f}% - " + (
             "Fed has been cutting over the last 6 months" if cutting else
             "Fed has been hiking" if hiking else "Fed on hold"))
@@ -585,7 +609,17 @@ def macro_weather():
     except Exception as e:
         notes.append(f"Yield curve unavailable ({e})")
     try:
-        b = cowan(get_btc_weekly())
+        # US dollar index: a rising dollar (plus Fed hikes) squeezes gold, miners, oil and the TSX
+        dx = cowan(yahoo_weekly("DX-Y.NYB"))
+        up = dx["trend"] in ("Uptrend", "JUST RECLAIMED band")
+        out["dollar_up"] = up
+        notes.append(f"US dollar index {dx['price']:.1f} - {dx['trend']} ({dx['pct_vs_band']:+.1f}% vs 20-week)" + (
+            " - strong dollar: headwind for gold, miners, oil and Canadian stocks" if up else
+            " - weak dollar: tailwind for gold, miners and oil" if dx["cowan"] <= 2 else ""))
+    except Exception as e:
+        notes.append(f"Dollar data unavailable ({e})")
+    try:
+        b = cowan(get_btc_weekly(), crypto=True)
         out["btc"] = b
         notes.append(f"Bitcoin ${b['price']:,.0f} - {b['trend']} ({b['pct_vs_band']:+.1f}% vs 20-week)")
     except Exception as e:
@@ -602,6 +636,8 @@ def macro_weather():
     risk = 0
     risk -= 2 if out.get("sahm", 0) >= 0.5 else 1 if out.get("sahm", 0) >= 0.3 else 0
     risk -= 1 if out.get("yc", 1) < 0 else 0
+    if out.get("dollar_up") and out.get("hiking"):   # strong dollar + Fed hiking = hawkish squeeze
+        risk -= 1
     if "btc" in out:
         risk += 1 if out["btc"]["cowan"] >= 16 else -1 if out["btc"]["cowan"] <= 2 else 0
     out["regime"] = "RISK-ON" if risk >= 1 else "RISK-OFF" if risk <= -2 else "NEUTRAL / CAUTIOUS"
@@ -693,6 +729,20 @@ def verdict(r, regime):
 
 
 # =============================================================== signals ===
+def commodity_trends():
+    """Trend of each commodity in config.COMMODITY_PROXY. {proxy: {name, trend, up}}"""
+    out = {}
+    for name, sym in config.COMMODITY_PROXY.items():
+        try:
+            c = cowan(yahoo_weekly(sym))
+            out[sym] = {"name": name, "trend": c["trend"],
+                        "up": c["trend"] in ("Uptrend", "JUST RECLAIMED band")}
+            print(f"    {name} ({sym}): {c['trend']}")
+        except Exception as e:
+            print(f"    {name} ({sym}) unavailable: {e}")   # missing data = no gate, not a block
+    return out
+
+
 def cad_info(t):
     if t.endswith((".TO", ".V", ".NE", ".CN")):
         return "CAD", ""
@@ -759,6 +809,8 @@ def growth_bullets(r):
         b.append("Just broke back above its trend line")
     elif r["trend"] == "Uptrend":
         b.append(f"Uptrend, {r['ret_26w']:+.0f}% in 6 months")
+    elif "RECLAIMING" in str(r["trend"]):
+        b.append("Popping above its trend line; needs a Friday close to confirm")
     if r["passed"]:
         b.append(f"Passes {r['passed']}")
     if r.get("sector") in ("Basic Materials", "Energy"):
@@ -841,7 +893,8 @@ def write_brief(df, macro):
     held = set(config.HOLDINGS)
     ok = (~df.ticker.isin(held)) & df.is_stock.astype(bool) & \
          (df.cowan >= 10) & (~df.trend.astype(str).str.contains("Overheated")) & \
-         (pd.to_numeric(df.rev_growth, errors="coerce").fillna(0) >= 0.10) & (df.buffett >= 6)
+         (pd.to_numeric(df.rev_growth, errors="coerce").fillna(0) >= 0.10) & (df.buffett >= 6) & \
+         df.get("pick_ok", True).astype(bool)
     g = df[ok].sort_values("growth_score", ascending=False)
     ca = g[g.currency.isin(["CAD"])].head(3)
     us = g[g.currency.isin(["USD", "CDR"])].head(3)
@@ -888,7 +941,7 @@ def write_reports(df, macro):
             "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score",
             "passes_raw", "legends_avail", "legends_na", "agree", "graham", "momentum",
             "piotroski", "f_score", "shares_chg", "red_flags", "red_flag_count", "pick_ok",
-            "ret_4w", "total_raw",
+            "ret_4w", "total_raw", "industry", "commodity_gate",
             "target", "n_analysts", "upside", "st_bull"]
     df = df.reindex(columns=cols)
     df.to_csv(os.path.join(config.REPORT_DIR, "latest.csv"), index=False)
@@ -1006,7 +1059,7 @@ def main(quick=False):
         row = {"ticker": t, "name": f.get("shortName") or t, **tr,
                      "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
                      "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
-                     "sector": f.get("sector"), "returnOnAssets": f.get("returnOnAssets"),
+                     "sector": f.get("sector"), "industry": f.get("industry"), "returnOnAssets": f.get("returnOnAssets"),
                      "returnOnEquity": f.get("returnOnEquity"),
                      "enterpriseToEbitda": f.get("enterpriseToEbitda"),
                      "rev_growth": f.get("revenueGrowth"),
@@ -1065,6 +1118,17 @@ def main(quick=False):
     df["pick_ok"] = ~serious & (nflag < 2)
     df["total"] = (df["total_raw"] - 5 * nflag).clip(lower=0).astype(int)
     df["red_flags"] = df["red_flags"].map(lambda fl: "; ".join(fl))
+    # Commodity gate (Nov 19, 2026): a miner or oil producer can't be a pick while its metal/oil
+    # is below its own trend line (gold miners got buy signals Nov 10 with gold in a downtrend).
+    gate = commodity_trends()
+    df["commodity_gate"] = ""
+    for i, r in df.iterrows():
+        key = config.COMMODITY_GATE.get(r.get("industry"))
+        if key and key in gate and not gate[key]["up"]:
+            df.at[i, "pick_ok"] = False
+            df.at[i, "commodity_gate"] = f"{gate[key]['name']} below its trend line"
+            df.at[i, "red_flags"] = "; ".join(x for x in [r["red_flags"],
+                                              f"{gate[key]['name']} below its trend line (commodity gate)"] if x)
     df["legends_na"] = df.apply(lambda r: ", ".join(label[c] for c in inv if pd.isna(r[c])), axis=1)
     df["passed"] = df.apply(lambda r: ", ".join(label[c] for c in inv if r[c] >= config.PASS_MARK), axis=1)
     df["agree"] = df.passes_raw.astype(int).astype(str) + "/" + df.legends_avail.astype(int).astype(str)

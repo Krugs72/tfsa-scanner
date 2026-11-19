@@ -109,3 +109,20 @@ CLOSE_WATCH = {
     "MSTR": "MSTR",
 }
 BIG_MOVE = {"BTC-USD": 5, "MSTR": 8}   # % daily move that counts as "big"; others 3%
+
+
+# Commodity gate (Nov 19, 2026): miners/producers can't be picks while the commodity itself is
+# below its trend line. Yahoo industry -> proxy ticker. Missing data = no gate.
+COMMODITY_PROXY = {"Gold": "GLD", "Silver": "SLV", "Copper": "CPER", "Oil": "USO",
+                   "Uranium": "U-UN.TO"}
+COMMODITY_GATE = {
+    "Gold": "GLD",
+    "Other Precious Metals & Mining": "SLV",
+    "Silver": "SLV",
+    "Copper": "CPER",
+    "Oil & Gas E&P": "USO",
+    "Oil & Gas Integrated": "USO",
+    "Oil & Gas Drilling": "USO",
+    "Oil & Gas Equipment & Services": "USO",
+    "Uranium": "U-UN.TO",
+}

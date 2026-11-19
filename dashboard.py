@@ -115,7 +115,7 @@ const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=nu
 const pct=x=>x==null?"–":(x>=0?"+":"")+Math.round(x*100)+"%";
 const money=x=>x==null?"–":"$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 function why(r){const w=[];
- if(r.trend.includes("RECLAIMED"))w.push("Just broke back above its trend line (Cowan's buy zone)");
+ if(r.trend.includes("RECLAIMED"))w.push("Just broke back above its trend line (Cowan's buy zone)");if(r.trend.includes("RECLAIMING"))w.push("Popping above its trend line; waiting for a Friday close to confirm");
  else if(r.trend==="Uptrend")w.push(`In an uptrend${r.r6!=null?`, ${r.r6>=0?"+":""}${Math.round(r.r6)}% in 6 months`:""}`);
  if(r.rg!=null&&r.rg>=0.15)w.push(`Sales growing fast (${pct(r.rg)} vs last year)`);
  if(r.eg!=null&&r.eg>5)w.push("Earnings jumped 5x+, likely off a low base, check it's not one-off");
