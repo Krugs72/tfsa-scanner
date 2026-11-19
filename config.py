@@ -95,3 +95,17 @@ FOMC_DATES = [
     "2027-01-27", "2027-03-17", "2027-04-28", "2027-06-09",
     "2027-07-28", "2027-09-15", "2027-10-27", "2027-12-08",
 ]
+
+
+# Close watch (Nov 18, 2026): daily detail on gold, silver, Bitcoin and MSTR.
+# name: Yahoo ticker. Shown in brief.md and written to reports/watch.csv.
+CLOSE_WATCH = {
+    "Bitcoin": "BTC-USD",
+    "Gold (CGL.C/ZGLD)": "CGL-C.TO",
+    "Gold (spot, GLD)": "GLD",
+    "Silver (PSLV)": "PSLV.TO",
+    "Silver (spot, SLV)": "SLV",
+    "Wheaton (WPM)": "WPM.TO",
+    "MSTR": "MSTR",
+}
+BIG_MOVE = {"BTC-USD": 5, "MSTR": 8}   # % daily move that counts as "big"; others 3%

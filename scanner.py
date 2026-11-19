@@ -766,6 +766,76 @@ def growth_bullets(r):
     return b
 
 
+def close_watch():
+    """Daily detail for gold, silver, Bitcoin and MSTR: where price sits vs Cowen's band
+    and the exact price that would count as a reclaim (weekly close above the top line + 2%)."""
+    import yfinance as yf
+    out = []
+    for name, t in config.CLOSE_WATCH.items():
+        try:
+            d = yf.download(t, period="2y", interval="1d", auto_adjust=True, progress=False)["Close"]
+            if isinstance(d, pd.DataFrame):
+                d = d.iloc[:, 0]
+            d = d.dropna()
+            if len(d) < 200:
+                continue
+            w = d.resample("W-FRI").last().dropna()
+            sma = w.rolling(config.BAND_FAST).mean()
+            ema = w.ewm(span=config.BAND_SLOW, adjust=False).mean()
+            hi, lo = max(sma.iloc[-1], ema.iloc[-1]), min(sma.iloc[-1], ema.iloc[-1])
+            p = float(d.iloc[-1])
+            reclaim, lose = hi * 1.02, lo * 0.98
+            yr = d.iloc[-252:]
+            above = w > pd.concat([sma, ema], axis=1).max(axis=1) * 1.02
+            below = w < pd.concat([sma, ema], axis=1).min(axis=1) * 0.98
+            # weeks since the last weekly close on the other side of the band
+            side = above.iloc[-1]
+            streak = 0
+            for a, b in zip(reversed(above.tolist()), reversed(below.tolist())):
+                if (a if side else not a):
+                    streak += 1
+                else:
+                    break
+            big = config.BIG_MOVE.get(t, 3)
+            chg1 = (p / float(d.iloc[-2]) - 1) * 100
+            out.append({
+                "name": name, "ticker": t, "price": round(p, 2),
+                "chg_1d": round(chg1, 1),
+                "chg_1w": round((p / float(d.iloc[-6]) - 1) * 100, 1),
+                "chg_4w": round((p / float(d.iloc[-21]) - 1) * 100, 1),
+                "band_low": round(lo, 2), "band_high": round(hi, 2),
+                "vs_band": round((p / hi - 1) * 100 if p > hi else (p / lo - 1) * 100 if p < lo else 0, 1),
+                "reclaim_price": round(reclaim, 2),
+                "to_reclaim": round((reclaim / p - 1) * 100, 1),
+                "lose_price": round(lose, 2),
+                "status": "above band" if side else ("below band" if below.iloc[-1] else "inside band"),
+                "weeks_same_side": streak,
+                "low_52w": round(float(yr.min()), 2), "high_52w": round(float(yr.max()), 2),
+                "from_low": round((p / float(yr.min()) - 1) * 100, 1),
+                "from_high": round((p / float(yr.max()) - 1) * 100, 1),
+                "big_move": abs(chg1) >= big,
+            })
+        except Exception as e:
+            print("    close watch", t, e)
+    return out
+
+
+def close_watch_lines(rows):
+    lines = ["", "## 👀 Close watch (gold, silver, Bitcoin, MSTR)",
+             "_Trigger = a WEEKLY close above the 'reclaim at' price (Sunday report confirms)._"]
+    for r in rows:
+        cur = "$" if r["ticker"] in ("BTC-USD", "MSTR", "GLD", "SLV") else "C$"
+        flag = " · 🔔 BIG MOVE" if r["big_move"] else ""
+        if r["status"] == "above band":
+            where = f"above its trend line {r['vs_band']:+.1f}% · exit if a week closes under {cur}{r['lose_price']:,.2f}"
+        else:
+            where = (f"{r['vs_band']:+.1f}% vs trend line · reclaim at {cur}{r['reclaim_price']:,.2f} "
+                     f"({r['to_reclaim']:+.1f}% away)")
+        lines.append(f"- **{r['name']}** {cur}{r['price']:,.2f} · day {r['chg_1d']:+.1f}% · "
+                     f"week {r['chg_1w']:+.1f}% · {where} · {r['from_low']:+.0f}% off 1-yr low{flag}")
+    return lines
+
+
 def write_brief(df, macro):
     """Short phone-friendly dashboard: top growth picks by Canada / US / Other."""
     held = set(config.HOLDINGS)
@@ -799,6 +869,7 @@ def write_brief(df, macro):
         lines.append(f"- **{r['ticker']}** ${r['price']:,.2f} · {r['trend']} ({r['pct_vs_band']:+.0f}% vs line)")
     if not len(other):
         lines.append("_Nothing in an uptrend._")
+    lines += close_watch_lines(macro.get("watch", []))
     lines += ["", "## 📌 Your holdings"]
     for _, r in df[df.ticker.isin(held)].iterrows():
         flag = f" · ⚠️ {r['signal'].split(' - ')[0]}" if isinstance(r["signal"], str) and r["signal"] else ""
@@ -902,6 +973,13 @@ def write_reports(df, macro):
 def main(quick=False):
     print("1/5 Market weather...")
     macro = macro_weather()
+    try:
+        macro["watch"] = close_watch()
+        os.makedirs(config.REPORT_DIR, exist_ok=True)
+        pd.DataFrame(macro["watch"]).to_csv(os.path.join(config.REPORT_DIR, "watch.csv"), index=False)
+    except Exception as e:
+        print("    close watch failed:", e)
+        macro["watch"] = []
     for n in macro["notes"]:
         print("   ", n)
 
