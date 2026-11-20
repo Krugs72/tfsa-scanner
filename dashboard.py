@@ -25,7 +25,7 @@ def _row(r):
         "signal": r["signal"] if isinstance(r["signal"], str) else "",
         "cur": r["currency"],
         "cdr": config.CDR_MAP.get(r["ticker"], ""),
-        "trend": r["trend"], "band": _num(r["pct_vs_band"]),
+        "trend": r["trend"], "band": _num(r["pct_vs_band"]), "dca": bool(r.get("dca_zone", False)),
         "rg": _num(r.get("rev_growth")), "eg": _num(r.get("eps_growth")),
         "pe": _num(r.get("pe")), "r6": _num(r.get("ret_26w")),
         "g": int(r["growth_score"]) if _num(r.get("growth_score")) is not None else None,
@@ -110,13 +110,13 @@ details summary{cursor:pointer;color:var(--accent)}
 </style></head><body><div class="wrap" id="app"></div>
 <script>
 const D=__DATA__;
-const L={cowan:"Cowan",buffett:"Buffett",lynch:"Lynch",oneil:"O'Neil",greenblatt:"Greenblatt",piotroski:"Piotroski",graham:"Graham",momentum:"Momentum"};
+const L={cowan:"Cowan",buffett:"Buffett",lynch:"Lynch",growth:"Growth",greenblatt:"Greenblatt",piotroski:"Piotroski",graham:"Graham",oneil:"O'Neil",momentum:"Momentum"};
 const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.textContent=h;return e};
 const pct=x=>x==null?"–":(x>=0?"+":"")+Math.round(x*100)+"%";
 const money=x=>x==null?"–":"$"+x.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
 function why(r){const w=[];
  if(r.trend.includes("mid-week"))w.push("Popped above its trend line this week; a Friday close confirms it");else if(r.trend.includes("RECLAIMED"))w.push("Just broke back above its trend line (Cowan's buy zone)");
- else if(r.trend==="Uptrend")w.push(`In an uptrend${r.r6!=null?`, ${r.r6>=0?"+":""}${Math.round(r.r6)}% in 6 months`:""}`);
+ else if(r.dca)w.push("Quality business well below its trend line: Cowen-style slow-buy (DCA) zone");else if(r.trend==="Uptrend")w.push(`In an uptrend${r.r6!=null?`, ${r.r6>=0?"+":""}${Math.round(r.r6)}% in 6 months`:""}`);
  if(r.rg!=null&&r.rg>=0.15)w.push(`Sales growing fast (${pct(r.rg)} vs last year)`);
  if(r.eg!=null&&r.eg>5)w.push("Earnings jumped 5x+, likely off a low base, check it's not one-off");
  else if(r.eg!=null&&r.eg>=0.25)w.push(`Earnings up ${pct(r.eg)}`);
@@ -157,7 +157,7 @@ const t2=el("table");t2.innerHTML="<tr><th>Holding</th><th>Price</th><th>Trend</
 D.hold.forEach(r=>{const tr=el("tr");const f=r.signal?r.signal.split(" - ")[0]:"OK";const fe=el("td","flag",f);fe.style.color=f.includes("EXIT")?"var(--bad)":f.includes("TRIM")?"var(--warn)":f.includes("ADD")?"var(--good)":"var(--mute)";
  tr.append(el("td",null,r.t),el("td",null,money(r.p)),el("td",null,`${r.trend} (${r.band>=0?"+":""}${Math.round(r.band||0)}%)`),fe);t2.append(tr)});app.append(t2);
 const ft=el("div","foot");const det=el("details");det.append(el("summary",null,"How the scores work"));
-det.append(el("p",null,"8 legends, each worth 20 points (scaled to 100). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line). Buffett = profitable, low debt, fair price. Lynch = growth at a reasonable price (uses next year's expected growth, so one-off jumps don't count). O'Neil = fast-rising earnings near highs. Greenblatt = high returns on capital + cheap. Piotroski = 9 checks that the business is really getting stronger (profits backed by cash, no new shares, less debt). Graham = cheap on earnings and assets with a strong balance sheet. Momentum = biggest 12-month winners (skipping the last month). No data for a legend = left out, not a fail. Red flags (one-off earnings, acquisition-driven sales, new shares, analysts' target below price, a crash, tiny/thinly traded) cost 5 points each; serious ones keep a stock out of the picks. We track how each legend's picks perform and drop the ones that don't help."));
+det.append(el("p",null,"7 legends (scoring v3), each worth 20 points (scaled to 100). A stock 'agrees' with a legend at 14+/20. Cowan = trend (above his 20-week line), or a 'DCA zone': a quality business 15%+ below the line, where Cowen favours slow regular buying. Buffett = profitable, low debt, fair price (miners can't pass: no pricing power). Growth = sales and earnings growing fast and expected to keep growing (replaced O'Neil + Momentum). Lynch = growth at a reasonable price (uses next year's expected growth, so one-off jumps don't count). Greenblatt = high returns on capital + cheap. Piotroski = 9 checks that the business is really getting stronger (profits backed by cash, no new shares, less debt). Graham = cheap on earnings and assets with a strong balance sheet. No data for a legend = left out, not a fail. Red flags (one-off earnings, acquisition-driven sales, new shares, analysts' target below price, a crash, tiny/thinly traded) cost 5 points each; serious ones keep a stock out of the picks. We track how each legend's picks perform and drop the ones that don't help."));
 det.append(el("p",null,"Spread today: "+Object.entries(D.counts).map(([k,v])=>`${k}/5: ${v}`).join(" · ")));
 ft.append(det,el("p",null,"Research tool only, not financial advice. Check the news before acting, and keep speculative bets small."));app.append(ft);
 </script></body></html>"""

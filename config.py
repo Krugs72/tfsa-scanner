@@ -80,11 +80,17 @@ ENTRY_MIN_BUFFETT = 10
 
 
 # ---- Legends (Nov 11, 2026: v2, expanded to 8; drop the ones that don't predict returns) ----
-LEGENDS = ["cowan", "buffett", "lynch", "oneil", "greenblatt", "piotroski", "graham", "momentum"]
-LEGEND_LABELS = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch", "oneil": "O'Neil",
+# v3 (Nov 20, 2026, Langley): O'Neil + Momentum merged into one 'Growth' legend (business growth,
+# no buying-near-highs); Cowen also credits a 'DCA zone' (quality stock deep below its band);
+# Buffett can't pass commodity producers. O'Neil and Momentum are still computed as info columns.
+LEGENDS = ["cowan", "buffett", "lynch", "growth", "greenblatt", "piotroski", "graham"]
+LEGEND_LABELS = {"cowan": "Cowan", "buffett": "Buffett", "lynch": "Lynch", "growth": "Growth",
                  "greenblatt": "Greenblatt", "piotroski": "Piotroski", "graham": "Graham",
-                 "momentum": "Momentum"}
-SCORING_VERSION = "v2"
+                 "oneil": "O'Neil", "momentum": "Momentum"}
+SCORING_VERSION = "v3"
+DCA_ZONE_BELOW_BAND = -15   # % below the 20-week line
+DCA_MIN_BUFFETT = 14        # only quality businesses (Buffett passes)
+DCA_ZONE_POINTS = 14        # counts as Cowen agreeing (slow buying, not a lump sum)
 PIOTROSKI_TOP_N = 250   # how many top candidates get the full-statement Piotroski check
 
 

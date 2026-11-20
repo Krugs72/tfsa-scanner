@@ -6,6 +6,7 @@ watchlist) with five great investors' rules, each worth 0-20 points:
   Buffett    - quality + value: P/E, ROE, debt, margins, free cash flow
   Lynch      - growth at a reasonable price (PEG)
   O'Neil     - CAN SLIM: earnings + sales speeding up, near highs, beating the market
+               (v3: O'Neil + Momentum are info only; the 'Growth' legend replaced them)
   Greenblatt - Magic Formula: high return on capital + cheap (ranked vs everyone)
 
 Plus a market-weather check (Fed, jobs, yield curve, Bitcoin) and news/Reddit
@@ -320,6 +321,7 @@ def is_fund(f):
 def buffett(f):
     if is_fund(f):
         return 14, "index/ETF"
+    # v3 (Nov 20, 2026): see the cap at the end for miners
     pts, why = 0, []
     pe = f.get("trailingPE")
     roe, de, pm, fcf = (f.get("returnOnEquity"), f.get("debtToEquity"),
@@ -331,6 +333,11 @@ def buffett(f):
     if fcf and fcf > 0: pts += 3
     elif fcf is not None and fcf <= 0: why.append("burning cash")
     if not pe: why.append("no profits")
+    # v3: Buffett avoids businesses that can't set their own prices. A miner's profits at record
+    # metal prices look like a moat in one year's numbers but aren't one (gold miners were his
+    # worst picks in the Nov 10-19 test). Cap them below the pass mark.
+    if f.get("sector") == "Basic Materials" and f.get("industry") in config.COMMODITY_GATE:
+        pts = min(pts, 10); why.append("commodity producer (price-taker)")
     return pts, ", ".join(why)
 
 
@@ -390,6 +397,24 @@ def oneil(f, tr, bench_ret):
     if (f.get("revenueGrowth") or 0) >= config.MIN_SALES_GROWTH: pts += 4
     if tr.get("off_high_pct") is not None and tr["off_high_pct"] >= -config.NEAR_HIGH * 100: pts += 4
     if tr.get("ret_26w") is not None and bench_ret is not None and tr["ret_26w"] > bench_ret + 10: pts += 5
+    return pts
+
+
+def growth(f):
+    """v3 'Growth' legend (replaces O'Neil + Momentum, Nov 20, 2026): is the business itself
+    growing fast, and do analysts expect it to keep growing? No price-chasing. 0-20."""
+    if is_fund(f):
+        return 0
+    pts = 0
+    eg, rg = f.get("earningsQuarterlyGrowth"), f.get("revenueGrowth")
+    if eg is not None:
+        pts += 8 if eg >= 0.25 else 4 if eg >= 0.10 else 0
+    if rg is not None:
+        pts += 6 if rg >= 0.20 else 3 if rg >= 0.10 else 0
+    tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
+    if tpe and fpe and tpe > 0 and fpe > 0:
+        g = tpe / fpe - 1                      # next year's expected earnings growth
+        pts += 6 if g >= 0.15 else 3 if g >= 0.05 else 0
     return pts
 
 
@@ -707,6 +732,8 @@ def sentiment(ticker, name):
 # =============================================================== verdict ===
 def verdict(r, regime):
     passes = r["passes"]
+    if r.get("dca_zone"):
+        return "DCA ZONE (buy slowly)"
     if r["buffett"] >= 14 and r["cowan"] >= 10:
         v = "CORE"
     elif r["buffett"] >= 14:
@@ -771,6 +798,8 @@ def signal(r, regime, held):
         strong = trend == "JUST RECLAIMED band" and r["passes"] >= 4
         sig = "STRONG ENTRY SIGNAL" if strong else "ENTRY SIGNAL"
         return sig + (" (market risk-off)" if regime == "RISK-OFF" else "")
+    if r.get("dca_zone") and r.get("pick_ok", True) and r["passes"] >= 3:
+        return "DCA ZONE (buy slowly)"
     return ""
 
 
@@ -810,6 +839,8 @@ def growth_bullets(r):
         b.append("Popped above its trend line this week; Friday close confirms it")
     elif "RECLAIMED" in str(r["trend"]):
         b.append("Just broke back above its trend line")
+    elif r.get("dca_zone"):
+        b.append(f"Quality business {abs(r['pct_vs_band']):.0f}% below its trend line: Cowen-style slow-buy zone")
     elif r["trend"] == "Uptrend":
         b.append(f"Uptrend, {r['ret_26w']:+.0f}% in 6 months")
     if r["passed"]:
@@ -940,7 +971,7 @@ def write_reports(df, macro):
             "pct_vs_band", "cowan", "buffett", "lynch", "oneil", "greenblatt",
             "peg", "buffett_notes", "buzz", "news_tone", "reddit_tone", "headline", "is_stock",
             "sector", "rev_growth", "eps_growth", "pe", "mcap_b", "ret_26w", "growth_score",
-            "passes_raw", "legends_avail", "legends_na", "agree", "graham", "momentum",
+            "passes_raw", "legends_avail", "legends_na", "agree", "graham", "momentum", "growth", "dca_zone",
             "piotroski", "f_score", "shares_chg", "red_flags", "red_flag_count", "pick_ok",
             "ret_4w", "total_raw", "industry", "commodity_gate",
             "target", "n_analysts", "upside", "st_bull"]
@@ -1073,6 +1104,15 @@ def main(quick=False):
                      "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None,
                      "graham": graham(f), "mom_raw": momentum_raw(prices[t])}
         row["red_flags"] = red_flags(row, f)
+        row["growth"] = growth(f)
+        row["dca_zone"] = False
+        serious_flag = any(k in x for x in row["red_flags"] for k in ("one-off", "new shares", "acquisition"))
+        if (row["is_stock"] and row["trend"] in ("Downtrend", "JUST LOST band")
+                and (row.get("pct_vs_band") or 0) <= config.DCA_ZONE_BELOW_BAND
+                and row["buffett"] >= config.DCA_MIN_BUFFETT and not serious_flag
+                and row.get("sector") not in CYCLICAL):
+            # Cowen: below the band is a bear market, where DCA (small regular buys) beats lump sums.
+            row["cowan"], row["dca_zone"] = config.DCA_ZONE_POINTS, True
         rows.append(row)
     df = pd.DataFrame(rows)
     df["greenblatt"] = greenblatt_ranks(df)
@@ -1116,7 +1156,10 @@ def main(quick=False):
     serious = df["red_flags"].map(lambda fl: any(k in x for x in fl for k in
                                                 ("one-off", "new shares", "acquisition")))
     df["red_flag_count"] = nflag
-    df["pick_ok"] = ~serious & (nflag < 2)
+    # v3: a big recent drop is the whole point of a DCA-zone buy, so it doesn't count toward blocking
+    nblock = df.apply(lambda r: sum(1 for x in r["red_flags"]
+                                    if not (r.get("dca_zone") and x.startswith("fell "))), axis=1)
+    df["pick_ok"] = ~serious & (nblock < 2)
     df["total"] = (df["total_raw"] - 5 * nflag).clip(lower=0).astype(int)
     df["red_flags"] = df["red_flags"].map(lambda fl: "; ".join(fl))
     # Commodity gate (Nov 19, 2026): a miner or oil producer can't be a pick while its metal/oil
