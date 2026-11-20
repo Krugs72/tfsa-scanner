@@ -1,55 +1,53 @@
-# ☀️ Morning brief · Nov 19
+# ☀️ Morning brief · Nov 20
 
-**Market:** NEUTRAL / CAUTIOUS · BTC $63,607 (JUST LOST band)
+**Market:** RISK-OFF · BTC $61,898 (JUST LOST band)
 
 ## 🇨🇦 Canada growth (no FX fee)
-**1. ATZ.TO** ARITZIA INC · $145.52 · Growth 87/100 · 🔔 ENTRY SIGNAL
+**1. BDT.TO** BIRD CONSTRUCTION INC. · $71.42 · Growth 79/100
+   - Sales +37% · Earnings +61% · P/E 50
+   - Passes Lynch, O'Neil, Momentum
+**2. ATZ.TO** ARITZIA INC · $141.51 · Growth 79/100
    - Sales +44% · Earnings +204% · P/E 29
-   - Uptrend, +3% in 6 months
-   - Passes Cowan, Buffett, Lynch, O'Neil, Piotroski, Momentum
-**2. BAM.TO** BROOKFIELD ASSET MANAGEMENT  · $72.16 · Growth 85/100
-   - Sales +72% · Earnings +265% · P/E 18
-   - Uptrend, +11% in 6 months
-   - Passes Cowan, Buffett, O'Neil, Greenblatt
-**3. ONEX.TO** ONEX CORPORATION · $115.72 · Growth 80/100
-   - Sales +22% · Earnings +149% · P/E 12
-   - Just broke back above its trend line
+   - Passes Buffett, Lynch, Piotroski, Momentum
+**3. FCR-UN.TO** FIRST CAPITAL REIT UNITS · $23.41 · Growth 77/100
+   - Sales +26% · Earnings +74% · P/E 5
+   - Popped above its trend line this week; Friday close confirms it
    - Passes Cowan, Buffett, O'Neil, Piotroski, Graham
 
 ## 🇺🇸 US growth
-**1. ALSN** Allison Transmission Holding · $124.91 · Growth 94/100 · 🔔 STRONG ENTRY SIGNAL · 💱 1.5% FX fee
+**1. ALSN** Allison Transmission Holding · $122.29 · Growth 94/100 · 🔔 STRONG ENTRY SIGNAL (market risk-off) · 💱 1.5% FX fee
    - Sales +121% · Earnings +39% · P/E 18
    - Just broke back above its trend line
    - Passes Cowan, Buffett, Lynch, O'Neil, Greenblatt, Momentum
-**2. QNST** QuinStreet, Inc. · $18.79 · Growth 93/100 · 💱 1.5% FX fee
-   - Sales +46% · Earnings +275% · P/E 12
-   - Uptrend, +53% in 6 months
-   - Passes Cowan, Buffett, Lynch, O'Neil
-**3. HNI** HNI Corporation · $49.06 · Growth 91/100 · 💱 1.5% FX fee
-   - Sales +133% · Earnings +118% · P/E 164
-   - Uptrend, +63% in 6 months
-   - Passes Cowan, Lynch, O'Neil, Greenblatt
+**2. PLMR** Palomar Holdings, Inc. · $156.68 · Growth 89/100 · 💱 1.5% FX fee
+   - Sales +58% · Earnings +27% · P/E 20
+   - Uptrend, +38% in 6 months
+   - Passes Cowan, Buffett, Lynch, O'Neil, Piotroski
+**3. TPC** Tutor Perini Corporation · $91.25 · Growth 89/100 · 💱 1.5% FX fee
+   - Sales +22% · Earnings +470% · P/E 35
+   - Just broke back above its trend line
+   - Passes Cowan, Lynch, O'Neil, Piotroski
 
 ## 🌐 Other (metals, crypto, themes)
 _Nothing in an uptrend._
 
 ## 👀 Close watch (gold, silver, Bitcoin, MSTR)
 _Trigger = a WEEKLY close above the 'reclaim at' price (Sunday report confirms)._
-- **Bitcoin** $63,607.08 · day +1.0% · week -0.8% · -13.8% vs trend line · reclaim at $75,967.78 (+19.4% away) · +9% off 1-yr low
-- **Gold (CGL.C/ZGLD)** C$44.44 · day -3.0% · week -6.1% · -8.8% vs trend line · reclaim at C$49.90 (+12.3% away) · +0% off 1-yr low · 🔔 BIG MOVE
-- **Gold (spot, GLD)** $341.19 · day -3.2% · week -6.6% · -10.5% vs trend line · reclaim at $390.63 (+14.5% away) · +0% off 1-yr low · 🔔 BIG MOVE
-- **Silver (PSLV)** C$20.69 · day -4.7% · week -13.3% · -22.7% vs trend line · reclaim at C$27.57 (+33.3% away) · +0% off 1-yr low · 🔔 BIG MOVE
-- **Silver (spot, SLV)** $40.70 · day -4.5% · week -12.8% · -23.3% vs trend line · reclaim at $54.59 (+34.1% away) · +0% off 1-yr low · 🔔 BIG MOVE
-- **Wheaton (WPM)** C$172.21 · day -5.3% · week -10.8% · -6.9% vs trend line · reclaim at C$189.75 (+10.2% away) · +24% off 1-yr low · 🔔 BIG MOVE
-- **MSTR** $90.32 · day -6.4% · week -26.2% · -26.5% vs trend line · reclaim at $131.71 (+45.8% away) · +10% off 1-yr low
+- **Bitcoin** $61,898.13 · day -0.0% · week -5.2% · -16.0% vs trend line · reclaim at $75,809.31 (+22.5% away) · +6% off 1-yr low
+- **Gold (CGL.C/ZGLD)** C$43.75 · day -1.6% · week -5.0% · -10.1% vs trend line · reclaim at C$49.87 (+14.0% away) · +0% off 1-yr low
+- **Gold (spot, GLD)** $335.18 · day -1.8% · week -5.6% · -12.0% vs trend line · reclaim at $390.33 (+16.5% away) · +0% off 1-yr low
+- **Silver (PSLV)** C$20.14 · day -2.7% · week -12.6% · -24.6% vs trend line · reclaim at C$27.54 (+36.8% away) · +0% off 1-yr low
+- **Silver (spot, SLV)** $39.64 · day -2.6% · week -12.1% · -25.2% vs trend line · reclaim at $54.54 (+37.6% away) · +0% off 1-yr low
+- **Wheaton (WPM)** C$166.75 · day -3.0% · week -11.1% · -9.5% vs trend line · reclaim at C$189.17 (+13.4% away) · +20% off 1-yr low · 🔔 BIG MOVE
+- **MSTR** $86.13 · day -4.6% · week -24.7% · -29.8% vs trend line · reclaim at $131.32 (+52.5% away) · +5% off 1-yr low
 
 ## 📌 Your holdings
-- **CCO.TO** $89.40 · Downtrend (-27%)
-- **VEQT.TO** $59.83 · Testing band (-3%)
-- **XDIV.TO** $45.65 · Testing band (-1%)
-- **MSTR** $90.32 · Downtrend (-26%) · ⚠️ EXIT WATCH
-- **CGL-C.TO** $44.44 · Downtrend (-9%)
-- **IMSR** $2.39 · Downtrend (-44%) · ⚠️ EXIT WATCH
-- **INFQ** $7.61 · Downtrend (-31%) · ⚠️ EXIT WATCH
+- **CCO.TO** $88.15 · Downtrend (-28%)
+- **XDIV.TO** $45.14 · Testing band (-2%)
+- **MSTR** $86.13 · Downtrend (-30%) · ⚠️ EXIT WATCH
+- **VEQT.TO** $58.82 · Downtrend (-4%)
+- **CGL-C.TO** $43.75 · Downtrend (-10%)
+- **IMSR** $2.30 · Downtrend (-46%) · ⚠️ EXIT WATCH
+- **INFQ** $7.30 · Downtrend (-34%) · ⚠️ EXIT WATCH
 
 _Research only, not financial advice._
