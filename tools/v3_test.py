@@ -14,3 +14,6 @@ cols = ["ticker", "total", "agree", "passed", "signal", "verdict", "trend", "pct
         "buffett", "lynch", "growth", "greenblatt", "graham", "dca_zone", "pick_ok", "red_flags"]
 pd.set_option("display.width", 250); pd.set_option("display.max_columns", 30); pd.set_option("display.max_colwidth", 45)
 print(d[d.ticker.isin(TEST)][[c for c in cols if c in d]].to_string(index=False))
+w = pd.read_csv("/tmp/v3/watch.csv")
+print(w[["ticker", "price", "status", "rsi_weekly", "bottom_signs", "bottom_have", "bottom_missing"]].to_string(index=False))
+print(d[d.ticker.isin(["BTO.TO", "LUG.TO", "KNT.TO", "COP"])][["ticker", "trend", "cowan", "buffett", "pe", "commodity_gate", "pick_ok", "red_flags"]].to_string(index=False))

@@ -333,11 +333,6 @@ def buffett(f):
     if fcf and fcf > 0: pts += 3
     elif fcf is not None and fcf <= 0: why.append("burning cash")
     if not pe: why.append("no profits")
-    # v3: Buffett avoids businesses that can't set their own prices. A miner's profits at record
-    # metal prices look like a moat in one year's numbers but aren't one (gold miners were his
-    # worst picks in the Nov 10-19 test). Cap them below the pass mark.
-    if f.get("sector") == "Basic Materials" and f.get("industry") in config.COMMODITY_GATE:
-        pts = min(pts, 10); why.append("commodity producer (price-taker)")
     return pts, ", ".join(why)
 
 
@@ -765,7 +760,7 @@ def commodity_trends():
     for name, sym in config.COMMODITY_PROXY.items():
         try:
             c = cowan(yahoo_weekly(sym))
-            out[sym] = {"name": name, "trend": c["trend"],
+            out[sym] = {"name": name, "trend": c["trend"], "cowan": c["cowan"],
                         "up": c["trend"] == "Uptrend" or "RECLAIMED" in c["trend"]}
             print(f"    {name} ({sym}): {c['trend']}")
         except Exception as e:
@@ -785,7 +780,7 @@ def cad_info(t):
 def signal(r, regime, held):
     """Rule-based alerts. Research leads, not orders."""
     trend = r["trend"]
-    up = ("RECLAIMED" in trend) or (trend == "Uptrend")
+    up = (("RECLAIMED" in trend) or (trend == "Uptrend")) and "isn't)" not in trend
     if held:
         if "JUST LOST" in trend:
             return "EXIT WATCH - just fell below trend band"
@@ -858,6 +853,13 @@ def close_watch():
     and the exact price that would count as a reclaim (weekly close above the top line + 2%)."""
     import yfinance as yf
     out = []
+    try:   # dollar trend feeds the metals' bottom signs
+        dx = yf.download("DX-Y.NYB", period="2y", interval="1wk", auto_adjust=True, progress=False)["Close"]
+        dx = (dx.iloc[:, 0] if isinstance(dx, pd.DataFrame) else dx).dropna()
+        dhi = max(dx.rolling(config.BAND_FAST).mean().iloc[-1], dx.ewm(span=config.BAND_SLOW, adjust=False).mean().iloc[-1])
+        dollar_weak = bool(dx.iloc[-1] < dhi)
+    except Exception:
+        dollar_weak = None
     for name, t in config.CLOSE_WATCH.items():
         try:
             d = yf.download(t, period="2y", interval="1d", auto_adjust=True, progress=False)["Close"]
@@ -885,6 +887,17 @@ def close_watch():
                     break
             big = config.BIG_MOVE.get(t, 3)
             chg1 = (p / float(d.iloc[-2]) - 1) * 100
+            # Bottom signs (Nov 20, 2026, Langley: watch gold/silver for a bottom before buying an ETF)
+            delta = w.diff()
+            gain = delta.clip(lower=0).ewm(alpha=1 / 14, adjust=False).mean()
+            loss = (-delta.clip(upper=0)).ewm(alpha=1 / 14, adjust=False).mean()
+            rsi = 100 - 100 / (1 + gain / loss)
+            signs = {
+                "no new 1-yr low in 2 weeks": bool(d.iloc[-10:].min() > yr.iloc[:-10].min()),
+                "weekly RSI was oversold and is turning up": bool(rsi.iloc[-9:-1].min() < 35 and rsi.iloc[-1] > rsi.iloc[-2]),
+                "dollar below its trend line": bool(dollar_weak) if dollar_weak is not None else False,
+                "back above its own trend line": bool(side),
+            }
             out.append({
                 "name": name, "ticker": t, "price": round(p, 2),
                 "chg_1d": round(chg1, 1),
@@ -901,6 +914,10 @@ def close_watch():
                 "from_low": round((p / float(yr.min()) - 1) * 100, 1),
                 "from_high": round((p / float(yr.max()) - 1) * 100, 1),
                 "big_move": abs(chg1) >= big,
+                "rsi_weekly": round(float(rsi.iloc[-1]), 1),
+                "bottom_signs": sum(signs.values()),
+                "bottom_have": "; ".join(k for k, v in signs.items() if v),
+                "bottom_missing": "; ".join(k for k, v in signs.items() if not v),
             })
         except Exception as e:
             print("    close watch", t, e)
@@ -918,8 +935,11 @@ def close_watch_lines(rows):
         else:
             where = (f"{r['vs_band']:+.1f}% vs trend line · reclaim at {cur}{r['reclaim_price']:,.2f} "
                      f"({r['to_reclaim']:+.1f}% away)")
+        bottom = ""
+        if r["ticker"] not in ("BTC-USD", "MSTR"):
+            bottom = f" · bottom signs {r['bottom_signs']}/4" + (f" ({r['bottom_have']})" if r["bottom_have"] else "")
         lines.append(f"- **{r['name']}** {cur}{r['price']:,.2f} · day {r['chg_1d']:+.1f}% · "
-                     f"week {r['chg_1w']:+.1f}% · {where} · {r['from_low']:+.0f}% off 1-yr low{flag}")
+                     f"week {r['chg_1w']:+.1f}% · {where} · {r['from_low']:+.0f}% off 1-yr low{bottom}{flag}")
     return lines
 
 
@@ -1089,6 +1109,13 @@ def main(quick=False):
         if i % 25 == 0:
             print(f"    {i}/{len(tickers)}")
         time.sleep(0.4)
+        if f.get("industry") in config.COMMODITY_GATE:
+            # v3.1 (Nov 20, 2026): at a commodity peak, last year's record profits make miners/oil look
+            # dirt cheap (B2Gold P/E 7, earnings x20 on Nov 10). Judge them on the less flattering of
+            # last year's and next year's expected earnings instead.
+            tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
+            if tpe and fpe and fpe > tpe > 0:
+                f = {**f, "trailingPE": fpe, "pe_note": "valued on next year's (lower) expected earnings"}
         b, bnotes = buffett(f)
         lp, peg = lynch(f)
         row = {"ticker": t, "name": f.get("shortName") or t, **tr,
@@ -1118,6 +1145,15 @@ def main(quick=False):
             row["cowan"], row["dca_zone"] = config.DCA_ZONE_POINTS, True
         rows.append(row)
     df = pd.DataFrame(rows)
+    # v3.1: a miner bouncing while its metal keeps falling is a fake trend signal (Nov 10: BTO/LUG
+    # 'just reclaimed' with gold in a downtrend). Cowen agrees only as much as the commodity does.
+    gate = commodity_trends()
+    for i, r in df.iterrows():
+        key = config.COMMODITY_GATE.get(r.get("industry"))
+        if key and key in gate:
+            df.at[i, "cowan"] = min(r["cowan"], gate[key]["cowan"])
+            if not gate[key]["up"] and ("RECLAIMED" in str(r["trend"]) or r["trend"] == "Uptrend"):
+                df.at[i, "trend"] = f"{r['trend']} (but {gate[key]['name'].lower()} isn't)"
     df["greenblatt"] = greenblatt_ranks(df)
     # Momentum: rank the 12-1 month return across all stocks (top = 20)
     mr = pd.to_numeric(df["mom_raw"], errors="coerce")
@@ -1167,15 +1203,11 @@ def main(quick=False):
     df["red_flags"] = df["red_flags"].map(lambda fl: "; ".join(fl))
     # Commodity gate (Nov 19, 2026): a miner or oil producer can't be a pick while its metal/oil
     # is below its own trend line (gold miners got buy signals Nov 10 with gold in a downtrend).
-    gate = commodity_trends()
     df["commodity_gate"] = ""
     for i, r in df.iterrows():
         key = config.COMMODITY_GATE.get(r.get("industry"))
         if key and key in gate and not gate[key]["up"]:
-            df.at[i, "pick_ok"] = False
             df.at[i, "commodity_gate"] = f"{gate[key]['name']} below its trend line"
-            df.at[i, "red_flags"] = "; ".join(x for x in [r["red_flags"],
-                                              f"{gate[key]['name']} below its trend line (commodity gate)"] if x)
     df["legends_na"] = df.apply(lambda r: ", ".join(label[c] for c in inv if pd.isna(r[c])), axis=1)
     df["passed"] = df.apply(lambda r: ", ".join(label[c] for c in inv if r[c] >= config.PASS_MARK), axis=1)
     df["agree"] = df.passes_raw.astype(int).astype(str) + "/" + df.legends_avail.astype(int).astype(str)
