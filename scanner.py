@@ -866,7 +866,7 @@ def close_watch():
             if isinstance(d, pd.DataFrame):
                 d = d.iloc[:, 0]
             d = d.dropna()
-            if len(d) < 200:
+            if len(d) < 100:   # SpaceX only listed Jun 12, 2026
                 continue
             w = d.resample("W-FRI").last().dropna()
             sma = w.rolling(config.BAND_FAST).mean()
@@ -928,7 +928,7 @@ def close_watch_lines(rows):
     lines = ["", "## 👀 Close watch (gold, silver, Bitcoin, MSTR)",
              "_Trigger = a WEEKLY close above the 'reclaim at' price (Sunday report confirms)._"]
     for r in rows:
-        cur = "$" if r["ticker"] in ("BTC-USD", "MSTR", "GLD", "SLV") else "C$"
+        cur = "$" if r["ticker"] in ("BTC-USD", "MSTR", "GLD", "SLV", "TSLA", "SPCX") else "C$"
         flag = " · 🔔 BIG MOVE" if r["big_move"] else ""
         if r["status"] == "above band":
             where = f"above its trend line {r['vs_band']:+.1f}% · exit if a week closes under {cur}{r['lose_price']:,.2f}"
@@ -936,7 +936,7 @@ def close_watch_lines(rows):
             where = (f"{r['vs_band']:+.1f}% vs trend line · reclaim at {cur}{r['reclaim_price']:,.2f} "
                      f"({r['to_reclaim']:+.1f}% away)")
         bottom = ""
-        if r["ticker"] not in ("BTC-USD", "MSTR"):
+        if r["ticker"] not in ("BTC-USD", "MSTR", "TSLA", "SPCX"):
             bottom = f" · bottom signs {r['bottom_signs']}/4" + (f" ({r['bottom_have']})" if r["bottom_have"] else "")
         lines.append(f"- **{r['name']}** {cur}{r['price']:,.2f} · day {r['chg_1d']:+.1f}% · "
                      f"week {r['chg_1w']:+.1f}% · {where} · {r['from_low']:+.0f}% off 1-yr low{bottom}{flag}")

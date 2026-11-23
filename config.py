@@ -12,6 +12,7 @@ WATCHLIST = [
     "CCJ", "NXE.TO", "OKLO", "SMR", "BWXT",            # nuclear / uranium
     "IONQ", "RGTI", "QBTS",                            # quantum
     "IBIT", "COIN",                                    # bitcoin-related
+    "TSLA", "SPCX", "NVDA", "GOOGL",                   # Langley's close watch (Nov 23, 2026)
 ]
 
 # Scan S&P 500 + TSX Composite + S&P 400 + S&P 600 (~1,700 stocks, ~30-40 min on GitHub)
@@ -113,8 +114,10 @@ CLOSE_WATCH = {
     "Silver (spot, SLV)": "SLV",
     "Wheaton (WPM)": "WPM.TO",
     "MSTR": "MSTR",
+    "Tesla": "TSLA",
+    "SpaceX": "SPCX",
 }
-BIG_MOVE = {"BTC-USD": 5, "MSTR": 8}   # % daily move that counts as "big"; others 3%
+BIG_MOVE = {"BTC-USD": 5, "MSTR": 8, "TSLA": 5, "SPCX": 5}   # % daily move that counts as "big"; others 3%
 
 
 # Commodity gate (Nov 19, 2026): miners/producers can't be picks while the commodity itself is
