@@ -194,6 +194,7 @@ def get_info_direct(ticker):
                     v = _raw(v)
                     if v is not None and v != {}:
                         flat[k] = v
+            flat.setdefault("dividendYield", flat.get("yield"))  # ETFs report it as "yield"
             if flat.get("dividendYield") is not None:          # yfinance reports this in % (2.5 = 2.5%)
                 flat["dividendYield"] = round(flat["dividendYield"] * 100, 2)
             flat.setdefault("averageVolume", flat.get("averageDailyVolume3Month"))
