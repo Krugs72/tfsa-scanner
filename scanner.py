@@ -119,18 +119,143 @@ INFO_KEYS = ["shortName", "quoteType", "sector", "trailingPE", "forwardPE",
              "averageVolume", "regularMarketPrice"]
 
 
+# Nov 24, 2026: Yahoo started cancelling the "crumb" (the session token company data needs)
+# partway through big scans from GitHub Actions (401 Invalid Crumb). yfinance kept reusing the
+# dead crumb, so every stock after that came back empty (337/1,719 at 1am, 0/1,719 at 7am).
+# Now: yfinance first (same numbers as before); if it comes back empty, wipe its crumb + cookie,
+# back off and retry; if that still fails, ask Yahoo directly with a fresh session.
+INFO_STATS = {"yfinance": 0, "yfinance retry": 0, "direct": 0, "failed": 0}
+_fail_streak = [0]
+
+
+def _has_data(info):
+    return bool(info) and any(info.get(k) is not None for k in
+                              ("marketCap", "trailingPE", "forwardPE", "sector", "returnOnEquity"))
+
+
+def _reset_yf_crumb():
+    try:
+        from yfinance import data as yd
+        d = yd.YfData()
+        with d._cookie_lock:
+            d._cookie = None
+            d._crumb = None
+            try:
+                d._session.cookies.clear()
+            except Exception:
+                pass
+        d._load_cookie_curlCffi = lambda *a, **k: False   # don't reload the dead cookie from disk
+    except Exception as e:
+        print("    (couldn't reset yfinance crumb:", e, ")")
+
+
+_direct = {"s": None, "crumb": None, "n": 0}
+_IMPERSONATE = ["chrome", "safari", "firefox", "edge"]
+
+
+def _direct_session(fresh=False):
+    if _direct["s"] is None or fresh:
+        from curl_cffi import requests as cr
+        _direct["n"] += 1
+        s = cr.Session(impersonate=_IMPERSONATE[_direct["n"] % len(_IMPERSONATE)])
+        s.get("https://fc.yahoo.com", timeout=20, allow_redirects=True)
+        crumb = s.get("https://query1.finance.yahoo.com/v1/test/getcrumb", timeout=20).text
+        if not crumb or "<" in crumb or "Too Many" in crumb:
+            raise RuntimeError(f"no crumb ({crumb[:40]!r})")
+        _direct["s"], _direct["crumb"] = s, crumb
+    return _direct["s"], _direct["crumb"]
+
+
+def _raw(v):
+    return v.get("raw") if isinstance(v, dict) else v
+
+
+def get_info_direct(ticker):
+    """Same fields as yfinance .info, straight from Yahoo's quoteSummary, with a fresh crumb on 401."""
+    mods = "price,summaryDetail,defaultKeyStatistics,financialData,assetProfile,quoteType"
+    for attempt in range(3):
+        try:
+            s, crumb = _direct_session(fresh=attempt > 0)
+            r = s.get(f"https://query2.finance.yahoo.com/v10/finance/quoteSummary/{ticker}",
+                      params={"modules": mods, "crumb": crumb}, timeout=20)
+            if r.status_code in (401, 403):
+                time.sleep(5 * (attempt + 1))
+                continue
+            if r.status_code == 429:
+                time.sleep(30 * (attempt + 1))
+                continue
+            if r.status_code != 200:
+                return {}
+            res = ((r.json().get("quoteSummary") or {}).get("result") or [{}])[0]
+            flat = {}
+            for mod in ("quoteType", "assetProfile", "price", "defaultKeyStatistics",
+                        "summaryDetail", "financialData"):
+                for k, v in (res.get(mod) or {}).items():
+                    v = _raw(v)
+                    if v is not None and v != {}:
+                        flat[k] = v
+            if flat.get("dividendYield") is not None:          # yfinance reports this in % (2.5 = 2.5%)
+                flat["dividendYield"] = round(flat["dividendYield"] * 100, 2)
+            flat.setdefault("averageVolume", flat.get("averageDailyVolume3Month"))
+            try:                                                 # yfinance gets PEG from this series
+                ts = s.get(f"https://query2.finance.yahoo.com/ws/fundamentals-timeseries/v1/finance/timeseries/{ticker}",
+                           params={"type": "trailingPegRatio", "period1": int(time.time()) - 86400 * 30,
+                                   "period2": int(time.time())}, timeout=15).json()
+                pts = ts["timeseries"]["result"][0].get("trailingPegRatio") or []
+                if pts:
+                    flat["trailingPegRatio"] = pts[-1]["reportedValue"]["raw"]
+            except Exception:
+                pass
+            return {k: flat.get(k) for k in INFO_KEYS}
+        except Exception:
+            time.sleep(5 * (attempt + 1))
+    return {}
+
+
 def get_info(ticker, tries=3):
     import yfinance as yf
     for n in range(tries):
         try:
             info = yf.Ticker(ticker).info or {}
-            return {k: info.get(k) for k in INFO_KEYS}
+            if _has_data(info):
+                INFO_STATS["yfinance" if n == 0 else "yfinance retry"] += 1
+                _fail_streak[0] = 0
+                return {k: info.get(k) for k in INFO_KEYS}
         except Exception as e:
             if "Too Many Requests" in str(e) or "429" in str(e):
                 time.sleep(20 * (n + 1))
-            else:
-                time.sleep(2)
+                continue
+        # Empty/401: the crumb is probably dead. Get a new one before trying again.
+        _reset_yf_crumb()
+        time.sleep(3 * (n + 1))
+        if n == 0:
+            break                          # one quick reset, then go direct (cheaper than 3 yfinance tries)
+    f = get_info_direct(ticker)
+    if _has_data(f):
+        INFO_STATS["direct"] += 1
+        _fail_streak[0] = 0
+        return f
+    INFO_STATS["failed"] += 1
+    _fail_streak[0] += 1
+    if _fail_streak[0] % 10 == 0:          # Yahoo is pushing back hard: cool off before the next stock
+        print(f"    {_fail_streak[0]} stocks in a row with no company data - pausing 90s")
+        time.sleep(90)
+        _reset_yf_crumb()
+        _direct["s"] = None
     return {}
+
+
+def info_coverage_note():
+    got = INFO_STATS["yfinance"] + INFO_STATS["yfinance retry"] + INFO_STATS["direct"]
+    total = got + INFO_STATS["failed"]
+    if not total:
+        return None, 1.0
+    pct = got / total
+    detail = ", ".join(f"{k} {v}" for k, v in INFO_STATS.items() if v)
+    if pct < 0.9:
+        return (f"⚠ DATA PROBLEM: Yahoo company data for only {got} of {total} stocks ({pct:.0%}; {detail}). "
+                f"Scores for the rest are missing, so today's picks are incomplete - treat with caution."), pct
+    return f"Company data: {got} of {total} stocks ({detail})", pct
 
 
 def get_fred(series_id):
@@ -1144,6 +1269,11 @@ def main(quick=False):
             # Cowen: below the band is a bear market, where DCA (small regular buys) beats lump sums.
             row["cowan"], row["dca_zone"] = config.DCA_ZONE_POINTS, True
         rows.append(row)
+    note, cov = info_coverage_note()
+    if note:
+        print("   ", note)
+        if cov < 0.9:
+            macro["notes"].insert(0, note)
     df = pd.DataFrame(rows)
     # v3.1: a miner bouncing while its metal keeps falling is a fake trend signal (Nov 10: BTO/LUG
     # 'just reclaimed' with gold in a downtrend). Cowen agrees only as much as the commodity does.
