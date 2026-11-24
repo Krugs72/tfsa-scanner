@@ -213,14 +213,26 @@ def get_info_direct(ticker):
     return {}
 
 
+_yf_misses = {"streak": 0, "skipped": 0}
+
+
 def get_info(ticker, tries=3):
     import yfinance as yf
+    # If yfinance has failed 5 stocks in a row, go straight to the direct fetch
+    # (and give yfinance another chance every 100 stocks).
+    use_yf = _yf_misses["streak"] < 5 or _yf_misses["skipped"] >= 100
+    if not use_yf:
+        _yf_misses["skipped"] += 1
+        tries = 0
+    else:
+        _yf_misses["skipped"] = 0
     for n in range(tries):
         try:
             info = yf.Ticker(ticker).info or {}
             if _has_data(info):
                 INFO_STATS["yfinance" if n == 0 else "yfinance retry"] += 1
                 _fail_streak[0] = 0
+                _yf_misses["streak"] = 0
                 return {k: info.get(k) for k in INFO_KEYS}
         except Exception as e:
             if "Too Many Requests" in str(e) or "429" in str(e):
@@ -231,6 +243,10 @@ def get_info(ticker, tries=3):
         time.sleep(3 * (n + 1))
         if n == 0:
             break                          # one quick reset, then go direct (cheaper than 3 yfinance tries)
+    if use_yf:
+        _yf_misses["streak"] += 1
+        if _yf_misses["streak"] == 5:
+            print("    yfinance company data failing - switching to direct Yahoo requests")
     f = get_info_direct(ticker)
     if _has_data(f):
         INFO_STATS["direct"] += 1
