@@ -1,54 +1,46 @@
-# ☀️ Morning brief · Nov 23
+# ☀️ Morning brief · Nov 24
 
-**Market:** RISK-OFF · BTC $61,449 (Downtrend)
+**Market:** RISK-OFF · BTC $60,103 (Downtrend)
 
 ## 🇨🇦 Canada growth (no FX fee)
-**1. CLS.TO** CELESTICA INC · $288.00 · Growth 80/100
-   - Sales +82% · Earnings +48% · P/E 16
-   - Quality business 33% below its trend line: Cowen-style slow-buy zone
-   - Passes Cowan, Buffett, Lynch, Growth, Piotroski
-**2. BDT.TO** BIRD CONSTRUCTION INC. · $69.45 · Growth 79/100
-   - Sales +37% · Earnings +61% · P/E 50
-   - Passes Lynch, Growth
-**3. FCR-UN.TO** FIRST CAPITAL REIT UNITS · $23.39 · Growth 76/100
-   - Sales +26% · Earnings +74% · P/E 5
-   - Uptrend, +1% in 6 months
-   - Passes Cowan, Buffett, Growth, Graham
+_Nothing qualifies today._
 
 ## 🇺🇸 US growth
-**1. PLMR** Palomar Holdings, Inc. · $163.59 · Growth 89/100 · 🔔 ENTRY SIGNAL (market risk-off) · 💱 1.5% FX fee
-   - Sales +58% · Earnings +27% · P/E 20
-   - Uptrend, +45% in 6 months
+**1. PLMR** Palomar Holdings, Inc. · $164.44 · Growth 95/100 · 🔔 ENTRY SIGNAL (market risk-off) · 💱 1.5% FX fee
+   - Sales +58% · Earnings +27% · P/E 21
+   - Uptrend, +55% in 6 months
    - Passes Cowan, Buffett, Lynch, Growth, Piotroski
-**2. NXST** Nexstar Media Group, Inc. · $196.13 · Growth 88/100 · 💱 1.5% FX fee
-   - Sales +78% · Earnings +264% · P/E 18
-   - Uptrend, +6% in 6 months
-   - Passes Cowan, Lynch, Growth, Greenblatt
-**3. KDP** Keurig Dr Pepper Inc. · $34.84 · Growth 87/100 · 💱 1.5% FX fee
-   - Sales +71% · Earnings +33% · P/E 31
+**2. TPC** Tutor Perini Corporation · $92.88 · Growth 93/100 · 💱 1.5% FX fee
+   - Sales +22% · Earnings +470% · P/E 35
+   - Popped above its trend line this week; Friday close confirms it
+   - Passes Cowan, Lynch, Growth, Piotroski
+**3. SEZL** Sezzle Inc. · $143.37 · Growth 90/100 · 🔔 ENTRY SIGNAL (market risk-off) · 💱 1.5% FX fee
+   - Sales +43% · Earnings +79% · P/E 28
    - Uptrend, +21% in 6 months
-   - Passes Cowan, Lynch, Growth
+   - Passes Cowan, Buffett, Lynch, Growth, Piotroski
 
 ## 🌐 Other (metals, crypto, themes)
-_Nothing in an uptrend._
+- **TSLA** $385.46 · RECLAIMED mid-week (Friday close pending) (+7% vs line)
 
 ## 👀 Close watch (gold, silver, Bitcoin, MSTR)
 _Trigger = a WEEKLY close above the 'reclaim at' price (Sunday report confirms)._
-- **Bitcoin** $61,448.57 · day +0.5% · week -2.4% · -15.7% vs trend line · reclaim at $74,851.46 (+21.8% away) · +5% off 1-yr low
-- **Gold (CGL.C/ZGLD)** C$42.19 · day -3.6% · week -8.5% · -13.1% vs trend line · reclaim at C$49.79 (+18.0% away) · +0% off 1-yr low · bottom signs 0/4 · 🔔 BIG MOVE
-- **Gold (spot, GLD)** $322.87 · day -3.7% · week -9.2% · -14.9% vs trend line · reclaim at $389.70 (+20.7% away) · +0% off 1-yr low · bottom signs 0/4 · 🔔 BIG MOVE
-- **Silver (PSLV)** C$19.04 · day -5.5% · week -15.5% · -28.4% vs trend line · reclaim at C$27.49 (+44.4% away) · +0% off 1-yr low · bottom signs 0/4 · 🔔 BIG MOVE
-- **Silver (spot, SLV)** $36.97 · day -6.7% · week -16.2% · -29.9% vs trend line · reclaim at $54.40 (+47.2% away) · +0% off 1-yr low · bottom signs 0/4 · 🔔 BIG MOVE
-- **Wheaton (WPM)** C$157.49 · day -5.6% · week -15.8% · -14.1% vs trend line · reclaim at C$188.70 (+19.8% away) · +13% off 1-yr low · bottom signs 1/4 (no new 1-yr low in 2 weeks) · 🔔 BIG MOVE
-- **MSTR** $77.80 · day -9.7% · week -30.3% · -36.4% vs trend line · reclaim at $130.55 (+67.8% away) · +0% off 1-yr low · 🔔 BIG MOVE
+- **Bitcoin** $60,103.23 · day -1.8% · week -2.9% · -17.4% vs trend line · reclaim at $74,782.84 (+24.4% away) · +3% off 1-yr low
+- **Gold (CGL.C/ZGLD)** C$43.55 · day +3.2% · week -5.1% · -9.4% vs trend line · reclaim at C$49.53 (+13.7% away) · +3% off 1-yr low · bottom signs 1/4 (weekly RSI was oversold and is turning up) · 🔔 BIG MOVE
+- **Gold (spot, GLD)** $333.02 · day +3.1% · week -5.6% · -11.3% vs trend line · reclaim at $387.45 (+16.3% away) · +3% off 1-yr low · bottom signs 1/4 (weekly RSI was oversold and is turning up) · 🔔 BIG MOVE
+- **Silver (PSLV)** C$19.93 · day +4.7% · week -7.8% · -23.3% vs trend line · reclaim at C$27.12 (+36.1% away) · +5% off 1-yr low · bottom signs 1/4 (weekly RSI was oversold and is turning up) · 🔔 BIG MOVE
+- **Silver (spot, SLV)** $38.91 · day +5.2% · week -8.2% · -24.4% vs trend line · reclaim at $53.64 (+37.8% away) · +5% off 1-yr low · bottom signs 1/4 (weekly RSI was oversold and is turning up) · 🔔 BIG MOVE
+- **Wheaton (WPM)** C$169.13 · day +7.4% · week -6.5% · -7.1% vs trend line · reclaim at C$189.40 (+12.0% away) · +22% off 1-yr low · bottom signs 1/4 (no new 1-yr low in 2 weeks) · 🔔 BIG MOVE
+- **MSTR** $84.40 · day +8.5% · week -18.1% · -30.7% vs trend line · reclaim at $126.50 (+49.9% away) · +8% off 1-yr low · 🔔 BIG MOVE
+- **Tesla** $385.46 · day +11.5% · week +1.5% · above its trend line +3.6% · exit if a week closes under $352.96 · +29% off 1-yr low · 🔔 BIG MOVE
+- **SpaceX** $133.35 · day +4.4% · week -2.9% · -4.2% vs trend line · reclaim at $146.11 (+9.6% away) · +23% off 1-yr low
 
 ## 📌 Your holdings
-- **CCO.TO** $83.11 · Downtrend (-32%)
-- **XDIV.TO** $45.00 · Testing band (-2%)
-- **MSTR** $77.80 · Downtrend (-36%) · ⚠️ EXIT WATCH
-- **VEQT.TO** $57.00 · Downtrend (-7%)
-- **CGL-C.TO** $42.19 · Downtrend (-14%)
-- **IMSR** $2.16 · Downtrend (-49%) · ⚠️ EXIT WATCH
-- **INFQ** $6.32 · Downtrend (-42%) · ⚠️ EXIT WATCH
+- **CCO.TO** $88.37 · Downtrend (-26%) · ⚠️ EXIT WATCH
+- **IMSR** $2.27 · Downtrend (-44%) · ⚠️ EXIT WATCH
+- **XDIV.TO** $45.13 · Testing band (-2%)
+- **INFQ** $6.75 · Downtrend (-37%) · ⚠️ EXIT WATCH
+- **VEQT.TO** $59.21 · Downtrend (-4%) · ⚠️ EXIT WATCH
+- **MSTR** $84.40 · Downtrend (-31%) · ⚠️ EXIT WATCH
+- **CGL-C.TO** $43.55 · Downtrend (-10%) · ⚠️ EXIT WATCH
 
 _Research only, not financial advice._
