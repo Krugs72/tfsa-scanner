@@ -126,6 +126,30 @@ INFO_KEYS = ["shortName", "quoteType", "sector", "trailingPE", "forwardPE",
 # back off and retry; if that still fails, ask Yahoo directly with a fresh session.
 INFO_STATS = {"yfinance": 0, "yfinance retry": 0, "direct": 0, "failed": 0}
 _fail_streak = [0]
+SKIPPED = []   # stocks whose scoring hit an error (scan carries on without them)
+
+
+TEXT_KEYS = {"shortName", "quoteType", "sector", "currency", "industry"}
+
+
+def _clean(d):
+    """Yahoo sometimes sends numbers as text ('Infinity', '12.3', '-') - make every number a real
+    number or None, so one odd value can't crash the scoring (Nov 25 scan died on a text P/E)."""
+    out = {}
+    for k in INFO_KEYS:
+        v = d.get(k)
+        if k in TEXT_KEYS or v is None:
+            out[k] = v
+            continue
+        if isinstance(v, dict):
+            v = v.get("raw")
+        try:
+            v = float(v)
+            v = v if v == v and abs(v) != float("inf") else None
+            out[k] = int(v) if v is not None and k == "numberOfAnalystOpinions" else v
+        except (TypeError, ValueError):
+            out[k] = None
+    return out
 
 
 def _has_data(info):
@@ -207,7 +231,7 @@ def get_info_direct(ticker):
                     flat["trailingPegRatio"] = pts[-1]["reportedValue"]["raw"]
             except Exception:
                 pass
-            return {k: flat.get(k) for k in INFO_KEYS}
+            return _clean(flat)
         except Exception:
             time.sleep(5 * (attempt + 1))
     return {}
@@ -233,7 +257,7 @@ def get_info(ticker, tries=3):
                 INFO_STATS["yfinance" if n == 0 else "yfinance retry"] += 1
                 _fail_streak[0] = 0
                 _yf_misses["streak"] = 0
-                return {k: info.get(k) for k in INFO_KEYS}
+                return _clean(info)
         except Exception as e:
             if "Too Many Requests" in str(e) or "429" in str(e):
                 time.sleep(20 * (n + 1))
@@ -1244,48 +1268,54 @@ def main(quick=False):
     print("4/5 Company numbers + trend...")
     rows = []
     for i, t in enumerate(tickers, 1):
-        if t not in prices:
-            continue
-        tr = cowan(prices[t])
-        f = get_info(t)
-        if i % 25 == 0:
-            print(f"    {i}/{len(tickers)}")
-        time.sleep(0.4)
-        if f.get("industry") in config.COMMODITY_GATE:
-            # v3.1 (Nov 20, 2026): at a commodity peak, last year's record profits make miners/oil look
-            # dirt cheap (B2Gold P/E 7, earnings x20 on Nov 10). Judge them on the less flattering of
-            # last year's and next year's expected earnings instead.
-            tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
-            if tpe and fpe and fpe > tpe > 0:
-                f = {**f, "trailingPE": fpe, "pe_note": "valued on next year's (lower) expected earnings"}
-        b, bnotes = buffett(f)
-        lp, peg = lynch(f)
-        row = {"ticker": t, "name": f.get("shortName") or t, **tr,
-                     "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
-                     "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
-                     "sector": f.get("sector"), "industry": f.get("industry"), "returnOnAssets": f.get("returnOnAssets"),
-                     "returnOnEquity": f.get("returnOnEquity"),
-                     "enterpriseToEbitda": f.get("enterpriseToEbitda"),
-                     "rev_growth": f.get("revenueGrowth"),
-                     "eps_growth": f.get("earningsQuarterlyGrowth"),
-                     "pe": f.get("trailingPE") or f.get("forwardPE"),
-                     "target": f.get("targetMeanPrice"),
-                     "n_analysts": f.get("numberOfAnalystOpinions"),
-                     "upside": (f["targetMeanPrice"] / tr["price"] - 1)
-                     if f.get("targetMeanPrice") and tr.get("price") else None,
-                     "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None,
-                     "graham": graham(f), "mom_raw": momentum_raw(prices[t])}
-        row["red_flags"] = red_flags(row, f)
-        row["growth"] = growth(f)
-        row["dca_zone"] = False
-        serious_flag = any(k in x for x in row["red_flags"] for k in ("one-off", "new shares", "acquisition"))
-        if (row["is_stock"] and row["trend"] in ("Downtrend", "JUST LOST band")
-                and (row.get("pct_vs_band") or 0) <= config.DCA_ZONE_BELOW_BAND
-                and row["buffett"] >= config.DCA_MIN_BUFFETT and not serious_flag
-                and row.get("sector") not in CYCLICAL):
-            # Cowen: below the band is a bear market, where DCA (small regular buys) beats lump sums.
-            row["cowan"], row["dca_zone"] = config.DCA_ZONE_POINTS, True
-        rows.append(row)
+        try:
+            if t not in prices:
+                continue
+            tr = cowan(prices[t])
+            f = get_info(t)
+            if i % 25 == 0:
+                print(f"    {i}/{len(tickers)}")
+            time.sleep(0.4)
+            if f.get("industry") in config.COMMODITY_GATE:
+                # v3.1 (Nov 20, 2026): at a commodity peak, last year's record profits make miners/oil look
+                # dirt cheap (B2Gold P/E 7, earnings x20 on Nov 10). Judge them on the less flattering of
+                # last year's and next year's expected earnings instead.
+                tpe, fpe = f.get("trailingPE"), f.get("forwardPE")
+                if tpe and fpe and fpe > tpe > 0:
+                    f = {**f, "trailingPE": fpe, "pe_note": "valued on next year's (lower) expected earnings"}
+            b, bnotes = buffett(f)
+            lp, peg = lynch(f)
+            row = {"ticker": t, "name": f.get("shortName") or t, **tr,
+                         "buffett": b, "buffett_notes": bnotes, "lynch": lp, "peg": peg,
+                         "oneil": oneil(f, tr, bench), "is_stock": not is_fund(f),
+                         "sector": f.get("sector"), "industry": f.get("industry"), "returnOnAssets": f.get("returnOnAssets"),
+                         "returnOnEquity": f.get("returnOnEquity"),
+                         "enterpriseToEbitda": f.get("enterpriseToEbitda"),
+                         "rev_growth": f.get("revenueGrowth"),
+                         "eps_growth": f.get("earningsQuarterlyGrowth"),
+                         "pe": f.get("trailingPE") or f.get("forwardPE"),
+                         "target": f.get("targetMeanPrice"),
+                         "n_analysts": f.get("numberOfAnalystOpinions"),
+                         "upside": (f["targetMeanPrice"] / tr["price"] - 1)
+                         if f.get("targetMeanPrice") and tr.get("price") else None,
+                         "mcap_b": round(f["marketCap"] / 1e9, 1) if f.get("marketCap") else None,
+                         "graham": graham(f), "mom_raw": momentum_raw(prices[t])}
+            row["red_flags"] = red_flags(row, f)
+            row["growth"] = growth(f)
+            row["dca_zone"] = False
+            serious_flag = any(k in x for x in row["red_flags"] for k in ("one-off", "new shares", "acquisition"))
+            if (row["is_stock"] and row["trend"] in ("Downtrend", "JUST LOST band")
+                    and (row.get("pct_vs_band") or 0) <= config.DCA_ZONE_BELOW_BAND
+                    and row["buffett"] >= config.DCA_MIN_BUFFETT and not serious_flag
+                    and row.get("sector") not in CYCLICAL):
+                # Cowen: below the band is a bear market, where DCA (small regular buys) beats lump sums.
+                row["cowan"], row["dca_zone"] = config.DCA_ZONE_POINTS, True
+            rows.append(row)
+        except Exception as e:
+            SKIPPED.append(t)
+            print(f"    skipped {t}: {type(e).__name__}: {e}")
+    if SKIPPED:
+        macro["notes"].append(f"Skipped {len(SKIPPED)} stock(s) with bad Yahoo data: {', '.join(SKIPPED[:10])}")
     note, cov = info_coverage_note()
     if note:
         print("   ", note)
